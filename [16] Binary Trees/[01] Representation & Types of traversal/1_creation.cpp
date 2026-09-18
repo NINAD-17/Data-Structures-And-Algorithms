@@ -17,9 +17,12 @@ class Node {
         }
 };
 
-// --- creation: recursive way ---
-// time complexity: O(n) because we're visiting each node once.
-// space complexity: O(h) where h = height
+// --- Creation: Recursive Way ---
+// Time Complexity: O(n) — each node created once
+// Space Complexity: O(h) recursion depth
+//   - Balanced tree: O(log n)
+//   - Skewed tree: O(n)
+//   - General unbalanced tree: O(h)
 Node* buildTree(Node* &root) {
     // initially the root is NULL
     int data;
@@ -42,10 +45,12 @@ Node* buildTree(Node* &root) {
     return root;
 }
 
-// --- creation: iterative way ---
-// in this code we add nodes level wise
-// time complexity: O(n) we’re visiting each node once.
-// space complexity: O(w), where w is the maximum width of the tree
+// --- Creation: Iterative Way ---
+// Time Complexity: O(n) — each node processed and pushed/popped once
+// Auxiliary Space Complexity: O(w) queue capacity, where w is max width of the tree
+//   - Balanced tree: O(n) — widest level holds ~n/2 nodes
+//   - Skewed tree: O(1) — each level has only 1 node, queue holds at most 1 element
+//   - General unbalanced tree: O(w) — bounded by the widest level
 Node* buildTreeIteratively(Node* &root) {
     // create a queue to store the nodes
     queue<Node*> q;
@@ -83,10 +88,13 @@ Node* buildTreeIteratively(Node* &root) {
     return root;
 }
 
-// --- level order traversal (breadth first search) ---
-// 1. using queue
-// time Complexity: O(n), where n is the number of nodes.
-// space Complexity: O(n), in the worst case, if the tree is a complete binary tree, there will be n/2 nodes at the last level, which will be added to the queue.
+// --- Level Order Traversal (Breadth First Search) ---
+// 1. Iterative (Using Queue)
+// Time Complexity: O(n), where n is the number of nodes.
+// Auxiliary Space Complexity: O(w) queue capacity, where w is max width of the tree
+//   - Balanced tree: O(n) — widest level holds ~n/2 nodes
+//   - Skewed tree: O(1) — each level has only 1 node, queue holds at most 1 element
+//   - General unbalanced tree: O(w) — bounded by the widest level
 void levelOrderTraversal(Node* &root) {
     if(root == NULL) {
         cout << "tree doesn't exist :(" << endl;
@@ -120,11 +128,11 @@ void levelOrderTraversal(Node* &root) {
     }
 }
 
-// 2. using height (recursive)
-// Time Complexity: O(h * n)
-//   - Balanced tree: O(n log n) since h ≈ log n
-//   - Skewed tree: O(n^2) since h = n
-// Space Complexity: O(h) (recursion stack depth)
+// 2. Recursive (Using Height)
+// Time: O(n)
+// Auxiliary Space Complexity: O(h)
+//   - Balanced tree: O(log n)
+//   - Skewed tree: O(n)
 int height(Node* node) {
     if(node == NULL) 
         return 0;
@@ -135,6 +143,8 @@ int height(Node* node) {
     return max(leftHeight, rightHeight) + 1;
 }
 
+// Time: O(n)
+// Space: O(level)
 void printCurrentLevel(Node* root, int level) {
     if(root == NULL)
         return ;
@@ -146,6 +156,10 @@ void printCurrentLevel(Node* root, int level) {
     } 
 }
 
+// Time: h * O(n) => O(h * n)
+//   - Skewed Tree: h = n => O(n * n) => O(n^2)
+//   - Balanced Tree: h = log n => O(n log n)
+// Space: O(h)
 void levelOrderTraversal_ByHeight(Node* &root) {
     int h = height(root);
     for(int level = 0; level < h; level++) {
@@ -154,8 +168,8 @@ void levelOrderTraversal_ByHeight(Node* &root) {
     }
 }
 
-// --- reverse level order traversal ---
-// 1. using height
+// --- Reverse Level Order Traversal ---
+// 1. Recursive (Using Height)
 void reverseOrderTraversal_ByHeight(Node* &root) {
     int h = height(root);
     for(int level = h - 1; level >= 0; level--) {
@@ -164,9 +178,9 @@ void reverseOrderTraversal_ByHeight(Node* &root) {
     }
 }
 
-// 2. using queue and stack
-// time complexity: O(n)
-// space complexity: O(n)
+// 2. Iterative (Using Queue And Stack)
+// Time Complexity: O(n)
+// Space Complexity: O(n)
 void reverseOrderTraversal(Node* root) {
     if(root == NULL) {
         cout << "root is NULL" << endl;
