@@ -20,6 +20,13 @@ bitset<32> usingBitset(int decNum) {
     return bitset<32>(decNum); 
 }
 
+
+// Time Complexity: O(1) time vs O(log n)
+// - manualBitsetLike: Fixed 32-bit loop -> always runs 32 times -> O(1) mathematically.
+// - decToBin: Loops until num == 0 via right shift (>> 1) -> runs log2(n) times -> O(log n).
+// Paradox: Because a 32-bit int has at most 31 bits, log2(n) <= 31.
+// Thus, the O(log n) approach actually runs <= 31 iterations, doing FEWER steps than O(1).
+// Note: manualBitsetLike avoids overflow via string, whereas decToBin overflows int if num >= 1024.
 string manualBitsetLike(int decNum) {
     string bits = "";
     

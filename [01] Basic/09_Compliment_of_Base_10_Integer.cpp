@@ -46,8 +46,9 @@ int main() {
     int x = 10;
     cout << "With regular ~ complement of 10 it'll give " << ~x << endl; // But we want different that is 10 = 1010 and ~10 = 0101 which is 5
 
-    cout << "Enter a number: ";
-    cin >> base10Int;
+    // cout << "Enter a number: ";
+    // cin >> base10Int;
+    base10Int = 10;
 
     cout << "Compliment of " << base10Int << " is " << complimentOfBase10Int(base10Int) << endl;
     cout << "Compliment of " << base10Int << " is " << compOfBase10Int(base10Int) << endl;
