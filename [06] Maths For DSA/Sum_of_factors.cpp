@@ -1,6 +1,9 @@
 #include <iostream>
 using namespace std;
 
+// Sum Of Factors
+// A factor of a number is a whole number that divides it exactly with no remainder—for example, 3 is a factor of 12 because 12 ÷ 3 = 4.
+
 // Time Complexity: O(sqrt(n))
 int sumOfFactors(int num) {
     int sum = 0;
@@ -18,8 +21,8 @@ int sumOfFactors(int num) {
 }
 
 int main() {
-    int num;
-    cin >> num;
+    int num = 16;
+    // cin >> num;
 
     cout << "Sum of factors of " << num << " is " << sumOfFactors(num) << endl;
     return 0;

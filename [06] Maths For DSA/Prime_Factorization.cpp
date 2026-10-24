@@ -9,7 +9,7 @@ using namespace std;
 // common: 2 × 2 × 3
 // GCD: 2 × 2 × 3 = 12
 
-// Time complexity (worst than brute force solution used in gcd.cpp): O(√num1 + √num2 + k1 × k2) ... here (k1 = factor1.size() and k2 = factor2.size())
+// Time complexity (worst than brute force solution used in gcd.cpp): O(√num1 + √num2 + k1 × k2) ... here (k1 = factor1.size() and k2 = factor2.size()) [UPDATE - added less time complexity solution below]
 // Space complexity: O(k1 + k2)
 //      - Storing prime factors of both numbers → O(k1 + k2)
 //      - used[] array → O(k2)
@@ -43,6 +43,29 @@ int findGCD_UsingPrimeFactorization(int num1, int num2) {
         }
     }
 
+    return gcd;
+}
+
+// With less time complexity
+// Time: O(√num1 + √num2 + k1 + k2)
+int findGCD_TwoPointers(int num1, int num2) {
+    vector<int> f1 = getPrimeFactors(num1);
+    vector<int> f2 = getPrimeFactors(num2);
+
+    int gcd = 1;
+    int i = 0, j = 0;
+
+    while (i < f1.size() && j < f2.size()) {
+        if (f1[i] == f2[j]) {
+            gcd *= f1[i];
+            i++;
+            j++;
+        } else if (f1[i] < f2[j]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
     return gcd;
 }
 

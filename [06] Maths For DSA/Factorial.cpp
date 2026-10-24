@@ -3,10 +3,10 @@ using namespace std;
 
 // Time complexity: O(n)
 long long calcFactorialUsingModularArithmetics(int num) {
-    int m = 1e9 + 7;
+    int m = 1e9 + 7; // 1000000000 + 7 = 1000000007 OR (1 × 10^9) + 1. It's a large prime number.
     long long result = 1;
 
-    if(num == 0) return 0;
+    if(num == 0) return 1;
 
     while(num != 1)
         result = (result * num--) % m; // This line ensures that result never exceeds m by taking the modulus after each multiplication.
@@ -20,7 +20,7 @@ long long calcFactorialUsingModularArithmetics(int num) {
 int calcFatorial(int num) {
     int result = 1;
 
-    if(num == 0) return 0;
+    if(num == 0) return 1;
 
     while(num != 1) 
         result *= num--;

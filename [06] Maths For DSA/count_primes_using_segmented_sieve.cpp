@@ -1,54 +1,97 @@
 #include <iostream>
 #include <vector>
-#include <math.h>
+#include <cmath>
+#include <algorithm>
+
 using namespace std;
 
-void sieveOfErastothenes(int limit, vector<int> &prime) {
-    vector<bool> mark(limit + 1, true);
-    mark[0] = mark[1] = false;
+// Step 1: Standard Sieve to compute all base primes up to floor(sqrt(num))
+vector<int> simpleSieve(int limit) {
+    vector<bool> isPrime(limit + 1, true);
+    isPrime[0] = isPrime[1] = false;
 
-    for(int i = 2; i <= limit; i++) {
-        if(mark[i]) {
-            for(int j = i * i; j < limit; j += i)
-                mark[j] = false;
+    for (int i = 2; i * i <= limit; i++) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= limit; j += i) {
+                isPrime[j] = false;
+            }
         }
     }
 
-    for(int i = 2; i < limit; i++) {
-        if(mark[i]) {
-            prime.push_back(i);
-            cout << i << " ";
+    vector<int> primes;
+    for (int i = 2; i <= limit; i++) {
+        if (isPrime[i]) {
+            primes.push_back(i);
         }
     }
+    return primes;
 }
 
-void segmentedSieve(int n) {
-    int limit = floor(sqrt(n)) + 1;
-    vector<int> prime;
-    prime.reserve(limit);
-    sieveOfErastothenes(limit, prime);
+// Step 2: Segmented Sieve to process remaining numbers in blocks
+void segmentedSieve(int num) {
+    if (num < 2) return;
 
-    int low = limit;
-    int high = 2 * limit;
+    // Use floor(sqrt(num)) to define the block size cleanly
+    int limit = floor(sqrt(num));
 
-    while(low < n) {
-        if(high >= n)
-            high = n;
+    // Base primes <= sqrt(num)
+    vector<int> primes = simpleSieve(limit);
+
+    // Print all base primes directly (no duplicates later)
+    for (int p : primes) {
+        cout << p << " ";
     }
 
-    for(int i = 0; i < prime.size(); i++) {
-        if(prime[i])
-            cout << prime[i] << " ";
+    // Segments strictly start AFTER the base primes range
+    int low = limit + 1;
+    int high = low + limit - 1; // inclusive upper bound: [low, high]
+
+    while (low <= num) {
+        // Cap the upper bound so we don't exceed 'num'
+        if (high > num) {
+            high = num;
+        }
+
+        // Window width is (high - low + 1), avoiding extra memory allocation
+        int windowSize = high - low + 1;
+        vector<bool> mark(windowSize, true);
+
+        // Cancel multiples using only the precomputed base primes
+        for (int p : primes) {
+            // Find the smallest multiple of p that is >= low
+            long long start = ((long long)low / p) * p;
+            if (start < low) {
+                start += p;
+            }
+
+            // Optimization & safety: Start at p * p because all smaller multiples
+            // (2*p, 3*p, etc.) were already cancelled by primes smaller than p.
+            start = max(start, (long long)p * p);
+
+            // Mark all multiples of p in current window [low, high]
+            for (long long j = start; j <= high; j += p) {
+                mark[j - low] = false; // Offset indexing: maps number 'j' -> index 'j - low'
+            }
+        }
+
+        // Print primes discovered in the current block
+        for (int i = low; i <= high; i++) {
+            if (mark[i - low]) {
+                cout << i << " ";
+            }
+        }
+
+        // Slide the window forward to the next disjoint segment
+        low = high + 1;
+        high = low + limit - 1;
     }
 
     cout << endl;
 }
 
 int main() {
-    int n = 50;
-
-    cout << "Prime numbers smaller than " << n << " are: ";
-    segmentedSieve(n);
-
+    int num = 105;
+    cout << "Primes up to " << num << ":\n";
+    segmentedSieve(num);
     return 0;
 }

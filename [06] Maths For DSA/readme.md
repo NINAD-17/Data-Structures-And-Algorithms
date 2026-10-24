@@ -8,8 +8,11 @@
 6. Prime Factorization
 7. GCD
 8. LCM
-9. Fast Exponentiation
-10. Pigeonhole Principle
+9. Factorial
+10. Fast Exponentiation
+11. Inclusive Exclusive Principle
+12. Pigeonhole Principle
+13. N-th Catalan Number
 
 ## Sieve of Eratosthenes
 - The Sieve of Eratosthenes is an ancient algorithm used to find all prime numbers up to any given limit
@@ -19,7 +22,7 @@
     1. Mark each number as a prime number
     2. Mark non-prime to the numbers which are in table of current selected number except selected number.
 
-**Explaination by Striver:**
+### Explaination by Striver:
 If a problem provides a  10<sup>6</sup> number of testcases and each number is very close to or equal to a 10<sup>6</sup>.
 Then the worst-case scenario becomes, 
 ```
@@ -32,8 +35,30 @@ If we assumed 10^8 as 1 second/ 2 second at max then this is going to take 10 se
 **Note:** If you define `int` array in main function or any other function then maximum limit is `10^6` and for `bool` it's `10^7`.
 But if you define `int` array globally then it's max limit is `10^7` and for `bool` it's `10^8`
 
+### Why outer loop till i*i < n?
 
-**Sieve of Eratosthenes** VS **Segmented Sieve**
+> Every composite number has at least one factor ≤ √n. After processing up to √n, all composite numbers are already marked.
+
+### Why inner loop starts from i*i?
+
+> Multiples smaller than i\*i (like 2\*i, 3\*i, etc.) were already marked when processing smaller factors, so starting from i*i avoids redundant work.
+
+> We start from i\*i because every multiple smaller than i\*i can be written as i × k where k < i. Since k was processed earlier, those multiples have already been marked as non-prime. Starting from i*i avoids redundant work.
+
+Example: 
+```
+i = 5
+
+10 = 2×5  -> already marked by 2
+15 = 3×5  -> already marked by 3
+20 = 4×5  -> already marked by 2
+
+First new multiple = 5×5 = 25
+```
+
+This i*i optimization is what makes Sieve of Eratosthenes much faster than a naive approach.
+
+### Sieve of Eratosthenes VS Segmented Sieve
 **Sieve of Eratosthenes**:
 - This algorithm creates a list of all integers from 2 to `n`.
 - It iteratively marks the multiples of each number starting from 2.
@@ -231,6 +256,51 @@ Note:
 - Examples:
     - 10 % 3 = 1
  (because 10 = 3 ⋅ 3 + 1)17
+
+
+### Why do we need modulo here? (in calcFactorialUsingModularArithmetics())
+
+- Suppose: 
+
+    ```
+    20!
+    ```
+
+    ```
+    20! = 2432902008176640000
+    ```
+
+- Already very large.
+
+- Now imagine:
+
+    ```
+    100!
+    ```
+
+- or
+
+    ```
+    1000!
+    ```
+
+- These won't fit even in long long.
+
+- So we do:
+
+    ```
+    result = (result * num) % MOD;
+    ```
+
+- after every multiplication.
+
+- This keeps the value bounded:
+    
+    ```
+    0 <= result < MOD
+    ```
+
+- Note: `10^9 + 7` is a large prime number that fits within a 32-bit signed integer and has useful mathematical properties for modular arithmetic. It is commonly used to prevent overflow while preserving correctness of calculations under modulo.
  
 
 ## Fast Exponentiation
@@ -284,3 +354,44 @@ a^b ----|
     - Number of numbers divisible by 4 = floor(1000/4) = 250.
     - Number of numbers divisible by both (i.e., divisible by their LCM which is 12) = floor(1000/12) = 83.
     - Therefore, number of numbers divisible by either 3 or 4 = 333 + 250 – 83 = 500¹
+
+
+
+## Catalan Numbers ($C_n$)
+
+The Catalan numbers form a sequence of natural numbers that appear repeatedly in combinatorics. In simple terms: it counts how many valid structures you can form under symmetrical pairing constraints.
+
+A sequence of positive integers that solves recursive structural combination problems.
+
+<a href="https://youtu.be/0pTN0qzpt-Y">Refer this video to understand Catalan Numbers</a>
+
+### Sequence
+`1, 1, 2, 5, 14, 42, 132, 429, 1430, ...`
+- $C_0 = 1, \quad C_1 = 1$
+
+---
+
+### Core Recurrence Formula
+$$C_n = \sum_{j=0}^{n-1} C_j \cdot C_{n - 1 - j}$$
+
+- $C_2 = C_0 C_1 + C_1 C_0 = 1(1) + 1(1) = 2$
+- $C_3 = C_0 C_2 + C_1 C_1 + C_2 C_0 = 1(2) + 1(1) + 2(1) = 5$
+
+---
+
+### Direct Formula (Combinatorics)
+$$C_n = \frac{1}{n + 1} \binom{2n}{n} = \frac{(2n)!}{(n + 1)! \; n!}$$
+
+---
+
+### Where It Appears in DSA
+1. **Count Unique BSTs:** Number of structurally unique BSTs with $n$ keys.
+2. **Balanced Parentheses:** Number of valid expressions using $n$ pairs of `()`.
+3. **Mountain Ranges:** Number of up/down stroke paths of length $2n$ that never cross below the horizon.
+4. **Matrix Chain Multiplication:** Number of ways to parenthesize the product of $n + 1$ matrices.
+
+---
+
+### Complexity (DP Approach)
+- **Time Complexity:** $O(n^2)$ (two nested loops)
+- **Space Complexity:** $O(n)$ (DP array `res`)
