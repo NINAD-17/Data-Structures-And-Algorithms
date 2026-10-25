@@ -2,7 +2,42 @@
 #include <vector>
 using namespace std;
 
-// --- using recursion ---
+// Pass By Reference Solution with Backtracking
+// With string output
+// Time: O(n * 2^n)
+// Auxillary Space: O(n) 
+//      if include ans then O(n * 2^n)
+void generate_2(string &str, string &output, int index, vector<string> &ans) {
+    if(index >= str.length()) {
+        ans.push_back(output);
+        return ;
+    }
+
+    // Exclude
+    generate_2(str, output, index + 1, ans);
+
+    // Include
+    output.push_back(str[index]); // OR output += str[index];
+    generate_2(str, output, index + 1, ans);
+
+    // Backtrack
+    output.pop_back(); // OR output.resize(output.length() - 1)
+}
+
+vector<string> generateSequence(string &str) {
+    vector<string> ans;
+    string output = "";
+
+    generate_2(str, output, 0, ans);
+    return ans;
+}
+
+
+// --- Recursion: Using Pass By Value ---
+// Note: Here output is vector<string> because of that it's not string output. On empty case it'll give you empty [] and not ""
+// Time: O(n * 2^n)
+// Auxillary Space: O(n^2) 
+//      if include ans then O(n * 2^n)
 void generate(string str, vector<string> output, int index, vector<vector<string>> &ans) {
     // Base Case
     if(index >= str.size()) {

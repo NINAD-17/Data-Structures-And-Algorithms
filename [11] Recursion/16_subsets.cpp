@@ -5,7 +5,27 @@ using namespace std;
 // Leetcode: https://leetcode.com/problems/subsets/description/
 // subset always contains 2^n elements. n is the total number of elements in an array.
 
-// --- recursion ---
+// Using Backtracking
+// Time: O(n * 2^n)
+// Space: O(n)
+void solve_backtrack(int *arr, int size, vector<int> &output, int index, vector<vector<int>> &ans) {
+    // Base Case
+    if(index >= size) {
+        ans.push_back(output);
+        return;
+    }
+
+    // Exclude
+    solve_backtrack(arr, size, output, index + 1, ans);
+
+    // Include
+    int element = arr[index];
+    output.push_back(element);
+    solve_backtrack(arr, size, output, index + 1, ans);
+    output.pop_back(); // backtrack
+}
+
+// --- recursion (output vector is passed by value)---
 // Time: Total subsets = 2^n. For each subset, building the output vector can take up to O(n) in the worst case.
 //       - therefore, O(n * 2^n)
 // Space: Recursion depth = O(n). Each recursive call has its own copy of output (since you pass by value).

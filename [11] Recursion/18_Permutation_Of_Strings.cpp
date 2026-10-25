@@ -7,7 +7,9 @@ using namespace std;
 
 
 // Recursive Solution
-// Time: O(n * n!)      Space: O(n * n!)  You store all n! permutations, each of length n → O(n · n!).
+// Time: O(n * n!)      
+// Auxillary Space: O(n) because of recursion stack
+//      Total Space: O(n * n!)  You store all n! permutations, each of length n → O(n · n!).
 void solve(vector<int> arr, int size, vector<vector<int>> &ans, int index) {
     // Base Case
     if(index >= size) { 
