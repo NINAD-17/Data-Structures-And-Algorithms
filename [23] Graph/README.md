@@ -7,18 +7,26 @@ Graph is a type of data structure which is a combination of nodes and edges.
 
 ## Types of Graph
 
-### 1. Directed Graph: 
+1. **Directed Graph**: 
 
     ![Directed Graph Example](images/directed_graph_example.png)
 
     Here, you can say that there's an edge between A to B but you can't say that it's between B to A. Because it's directed from A to B.
 
-### 2. Undirected Graph:
+2. **Undirected Graph**:
 
     ![Undirected Graph Example](images/undirected_graph_example.png)
 
     In between U and V there's no direction that's why we can say that there's an edge between U to V (U - V) and also have edge between V to U (V - U)
 
+3. **Disconnected Graph**:
+
+    ![Disconnected Graph Example](images/disconnected_graph_example.png)
+
+    One graph can contain multiple components which aren't connected with each other. Here, you can see that, 
+    
+    - **Component 1 is nodes with A, B, C and D**. 
+    - **Component 2 has only one node that's D**.
 
 ## Graph Terminologies
 
@@ -86,7 +94,7 @@ Graph is a type of data structure which is a combination of nodes and edges.
 
 ## Graph Representations:
 
-### 1. Adjacency Matrix:
+1. **Adjacency Matrix**:
     
     - We'll get number of nodes, edges in the input and a list of node mapping.
     
@@ -96,7 +104,7 @@ Graph is a type of data structure which is a combination of nodes and edges.
 
     We can make this matrix by using nested for loops.
 
-### 2. Adjacency List:
+2. **Adjacency List**:
 
     - We'll get number of nodes, edges in the input and a list of node mapping.
 
@@ -106,60 +114,118 @@ Graph is a type of data structure which is a combination of nodes and edges.
 
 ## Complexity Analysis Of Graph Creation
 
-### 1. Complexity of `addEdge()`
+1. **Complexity of** `addEdge()`
 
-- Time Complexity: $O(1)$ on average, $O(V)$ worst-case.
+    - Time Complexity: $O(1)$ on average, $O(V)$ worst-case.
 
-- `adj[startNode]` performs a hash table lookup in unordered_map. 
+    - `adj[startNode]` performs a hash table lookup in unordered_map. 
 
-- On average, bucket lookup is $O(1)$. 
+    - On average, bucket lookup is $O(1)$. 
 
-- In the worst-case (severe hash collisions or rehashing), it can be $O(V)$ where $V$ is the number of vertices.
+    - In the worst-case (severe hash collisions or rehashing), it can be $O(V)$ where $V$ is the number of vertices.
 
-- `.push_back()` on a `std::vector` is amortized $O(1)$. Therefore, adding a single edge takes $O(1)$ amortized time.
+    - `.push_back()` on a `std::vector` is amortized $O(1)$. Therefore, adding a single edge takes $O(1)$ amortized time.
 
 ---
 
-### 2. Complexity of `printAdjList()`
+2. **Complexity of** `printAdjList()`
 
-Your intuition about nested loops often meaning $O(V^2)$ is common, but here it is actually $O(V + E)$.
+    Your intuition about nested loops often meaning $O(V^2)$ is common, but here it is actually $O(V + E)$.
+
+    Let:
+
+    - $V$ = number of unique vertices (keys in the map)
+
+    - $E$ = total number of edges
+
+    Here is why:
+
+    - The outer loop runs once for each unique node in the map: $V$ times.
+
+    - The inner loop does not run $V$ times for every node. It only iterates through that specific node's direct neighbors. Across the entire execution of the outer loop, the inner loop visits every edge stored:
+
+        - In a directed graph, the sum of all neighbor list lengths is exactly $E$.
+        
+        - In an undirected graph, each edge is stored twice, so the sum of lengths is $2E$.
+        
+    - Total steps = (outer loop iterations) + (total inner loop iterations across all nodes) = $V + 2E \rightarrow \mathbf{O(V + E)}$.
+
+    **Auxiliary Space Complexity of** `printAdjList`:
+
+    - **With &: $O(1)$ auxiliary space**. No copies of vectors or pairs are allocated.
+
+    - **Without &** (instructor's code): It creates a temporary copy of each vector `i.second`. The maximum memory consumed at any single moment is the size of the largest neighbor list: $O(\text{max\_degree})$, which can be up to $O(V)$ extra heap memory during each iteration.
+
+---
+
+3. **Overall Time & Space Complexity of the Graph**
+
+    - **Total Space Complexity**: $O(V + E)$
+
+        - The unordered_map stores $V$ keys and internal bucket pointers: $O(V)$.
+        
+        - The vectors across all nodes hold all directed/undirected edge entries: $O(E)$.
+        
+        - Total memory in RAM: $O(V + E)$.
+        
+    - **Total Construction Time**: For $E$ total edges, calling addEdge $E$ times takes $O(E)$ average time.
+
+
+## BFS and DFS Traversal
+
+### Time and Space Complexity Comparison of BFS
 
 Let:
 
-- $V$ = number of unique vertices (keys in the map)
+- $V$ = number of unique vertices/nodes
+ 
+- $E$ = number of edges
 
-- $E$ = total number of edges
+    | Aspect | Standard Index-Based Code (`0` to `V - 1`) | Arbitrary Node Labels Code (Custom List) |
+    | :--- | :--- | :--- |
+    | **Graph Construction** | $O(E \log K)$ ($K$ is max degree, due to `set::insert`) | $O(V + E \log K)$ ($V$ to init all nodes + $E \log K$ for edges) |
+    | **Sorting Nodes** | $O(1)$ (no sorting needed; loop runs $0 \dots V-1$) | $O(V \log V)$ (`sort(nodes.begin(), nodes.end())`) |
+    | **BFS Traversal** | $O(V + E \log K)$ (each edge visited twice, `set` traversal) | $O(V + E \log K)$ |
+    | **Total Time Complexity** | **$O(V + E \log K)$** | **$O(V \log V + E \log K)$** |
+    | **Total Space Complexity** | **$O(V + E)$** (`adjList`, `visited`, `queue`, `ans`) | **$O(V + E)$** (`adjList`, `visited`, `queue`, `ans`) |
 
-Here is why:
-
-- The outer loop runs once for each unique node in the map: $V$ times.
-
-- The inner loop does not run $V$ times for every node. It only iterates through that specific node's direct neighbors. Across the entire execution of the outer loop, the inner loop visits every edge stored:
-
-    - In a directed graph, the sum of all neighbor list lengths is exactly $E$.
-    
-    - In an undirected graph, each edge is stored twice, so the sum of lengths is $2E$.
-    
-- Total steps = (outer loop iterations) + (total inner loop iterations across all nodes) = $V + 2E \rightarrow \mathbf{O(V + E)}$.
-
-**Auxiliary Space Complexity of** `printAdjList`:
-
-- **With &: $O(1)$ auxiliary space**. No copies of vectors or pairs are allocated.
-
-- **Without &** (instructor's code): It creates a temporary copy of each vector `i.second`. The maximum memory consumed at any single moment is the size of the largest neighbor list: $O(\text{max\_degree})$, which can be up to $O(V)$ extra heap memory during each iteration.
+Why the $\log K$ factor? Because both codes use std::set<int> instead of std::vector<int> for neighbors. Inserting into and iterating an ordered set adds an $O(\log K)$ step per neighbor to keep them sorted. If you switch set<int> to vector<int>, total traversal drops down to the textbook standard $O(V + E)$.
 
 ---
 
-###  3. Overall Time & Space Complexity of the Graph
+### BFS vs DFS
 
-- **Total Space Complexity**: $O(V + E)$
+- **BFS (Breadth-First)**: Uses a FIFO Queue to explore all immediate neighbors at the current level before moving deeper.
 
-    - The unordered_map stores $V$ keys and internal bucket pointers: $O(V)$.
-    
-    - The vectors across all nodes hold all directed/undirected edge entries: $O(E)$.
-    
-    - Total memory in RAM: $O(V + E)$.
-    
-- **Total Construction Time**: For $E$ total edges, calling addEdge $E$ times takes $O(E)$ average time.
+- **DFS (Depth-First)**: Uses the Call Stack (recursion). It picks the first available unvisited neighbor and immediately goes deep down that branch until it hits a dead end, then backtracks.
 
+---
 
+### Time and Space Complexity of DFS
+
+Let:
+
+- $V$ = number of vertices (v)
+
+- $E$ = number of edges (e)
+
+- $K$ = maximum degree of any vertex
+
+**Time Complexity: $O(V + E \log K)$**
+- Building Adjacency List: $O(E \log K)$ because inserting into a std::set takes $O(\log K)$ time.
+
+- **DFS Traversal**: Each vertex is visited once ($O(V)$), and every edge is traversed twice ($2E$ iterations). Iterating through std::set elements introduces the $\log K$ tree-traversal factor across edges.
+
+- **Total Time**: $O(V + E \log K)$. (If you use vector<int> instead of set<int>, this becomes the optimal textbook $O(V + E)$).
+
+**Space Complexity:** $O(V + E)$
+
+- Adjacency List (adjList): Stores all $V$ nodes and $2E$ directed edge entries: $O(V + E)$.
+
+- Visited Map (visited): Stores $V$ keys: $O(V)$.
+
+- Output List (ans): Stores all $V$ nodes partitioned across components: $O(V)$.
+
+- Call Stack (Recursion): In the worst case (a linear skewed graph like $0-1-2-3-4$), recursion depth reaches $V$: $O(V)$.
+
+- Total Auxiliary Space: $O(V + E)$.
