@@ -229,3 +229,74 @@ Let:
 - Call Stack (Recursion): In the worst case (a linear skewed graph like $0-1-2-3-4$), recursion depth reaches $V$: $O(V)$.
 
 - Total Auxiliary Space: $O(V + E)$.
+
+
+## Topological Sort
+
+We can apply topological sort only on DAG.
+
+**DAG (Directed Acyclic Graph)**: It's a directed graph with no cycles present.
+
+Topological sort of DAG is a linear ordering of vertices such that for every directed edge from vertex 'u' to vertex 'v', vertex 'u' comes before 'v' in the ordering. This sort isn't possible if the graph isn't DAG.
+
+### Why we can't apply topological sort on cyclic graph?
+
+Example:
+    
+```
+       (1)
+      /   \
+     ^     \
+    /       v
+  (3) <---- (2)  
+```
+
+**Topological Sort Rule:** In a linear ordering, for every directed edge $u \to v$, node $u$ must appear **before** node $v$.
+
+Given Edges in Cycle:
+
+* $1 \to 2$
+
+* $2 \to 3$
+
+* $3 \to 1$
+
+
+
+---
+
+#### The Linear Dependency Conflict
+
+According to topological sorting rules:
+
+1. Edge $1 \to 2 \implies$ **$1$ must appear before $2$**
+
+2. Edge $2 \to 3 \implies$ **$2$ must appear before $3$**
+
+3. Edge $3 \to 1 \implies$ **$3$ must appear before $1$**
+
+
+If we place them linearly based on the first two rules: `[ 1, 2, 3 ]`
+
+```text
+           ❌ Back-edge violation (3 must come before 1)
+         +-----------------------------------------------+
+         |                                               |
+         v                                               |
+       [ 1 ] -------------> [ 2 ] -------------> [ 3 ] --+
+              (1 before 2)         (2 before 3)
+
+```
+
+* Condition $1$ and $2$ force the order: $1 \to 2 \to 3$.
+
+* But condition $3$ demands that $3$ comes before $1$.
+
+* This creates a **circular dependency**:
+
+$$1 \text{ before } 2 \text{ before } 3 \text{ before } 1$$
+
+
+* **Conclusion:** No linear arrangement can satisfy all edges simultaneously without arrows pointing backwards.
+
+
