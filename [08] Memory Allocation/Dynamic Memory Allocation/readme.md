@@ -102,3 +102,29 @@ To create an array of size `5` in heap, use `int *arr = new int[5];`. The total 
     -   The total memory available depends on the system's physical RAM.
 
 In summary, heap memory is not fixed; it can grow as needed from the available physical memory.
+
+
+When you declare a regular local array inside a function:
+```C++
+void func() {
+    int arr[1000000]; // This is NOT static memory. This is STACK memory.
+}
+```
+
+- arr has a fixed size at compile-time, but it is allocated on the stack frame when func() is entered.
+
+- Because the stack is small (typically only 1 MB to 8 MB), allocating a huge array locally causes a Stack Overflow.
+
+Now look at real static memory:
+
+```C++
+void func() {
+    static int arr[1000000]; // Lives in the BSS/Data segment, NOT on the stack.
+}
+```
+- Prefixing with static moves the array completely off the stack.
+- Calling func() recursively 10,000 times will never overflow the stack due to arr, because that memory is allocated once when the program launches and persists until the program exits.
+
+Key takeaway:
+- Fixed size at compile time $\neq$ Static memory. Regular local variables have compile-time fixed sizes too, but they live on the stack.
+- Static memory refers strictly to global or static-keyword variables stored in the program's permanent data segment.

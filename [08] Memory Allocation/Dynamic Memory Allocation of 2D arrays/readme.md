@@ -10,7 +10,7 @@
 - We know that arrays are showed by `int*`. So we need multiple `int*` for 2D array. 
 - `int **arr = new int*[n]` It means bring multiple `n` numbers of `int*` and store in `int** arr`.
 
-```
+```cpp
     // Creating multiple rows (Or it's just an array but assuming each element of this array as a starting point of new array or a row)
     int **arr = new int*[rows];
 
