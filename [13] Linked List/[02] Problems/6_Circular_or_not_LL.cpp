@@ -18,8 +18,8 @@ bool isCircularLL(Node* &tail) {
     while(tempNode != NULL && tempNode != tail) 
         tempNode = tempNode -> next;
 
-    // if(tempNode == NULL) 
-    //     return false;
+    if(tempNode == NULL) 
+        return false;
     
     if(tempNode == tail)
         return true;
@@ -76,6 +76,10 @@ int main() {
     insertNode(tail, 8, 9);
     insertNode(tail, 9, 10);
     
+    // Note: Here because of insertNode() function we don't have any access to any node except 'tail'
+    //       To access individual node for manipulation we need to implement something.
+    //       Read the README.md for more explaination.
+    //       It's not related to this question (problem) - it's just a doubt regarding linkedlist
 
     printLL(tail); // circular linkedlist's printLL function
 

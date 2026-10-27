@@ -98,7 +98,7 @@ void deleteNode(Node* &tail, int nodeToDelete) {
     }
 
     if(curr == tail) 
-        tail = curr -> next;
+        tail = curr -> next; // WRONG: make prev the new tail i.e. tail = prev;
 
     prev -> next = curr -> next;
     curr -> next = NULL;

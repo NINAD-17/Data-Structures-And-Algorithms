@@ -6,6 +6,8 @@ using namespace std;
 // time complexity: O(n)
 // space complexity: O(n)
 
+// RECURSIVE SOLUTION
+// -- (i) It reverses non-K nodes as well
 Node* reverseLL(Node* &head, int k) {
     // empty linked list
     if(head == NULL) 
@@ -32,6 +34,38 @@ Node* reverseLL(Node* &head, int k) {
     return prev;
 }
 
+// -- (ii) Stop non-K reversal
+Node* reverseLL2(Node* &head, int k) {
+    if(head == NULL) return NULL;
+
+    // stop non-k reversal
+    Node* check = head;
+    for(int i = 0; i < k; i++) {
+        if(check == NULL) return head;
+        check = check -> next;
+    }
+
+    Node* prev = NULL;
+    Node* curr = head;
+    Node* forward = NULL;
+
+    int numOfIterations = 1;
+    while(curr != NULL && numOfIterations <= k) {
+        forward = curr -> next;
+        curr -> next = prev;
+        prev = curr;
+        curr = forward;
+        numOfIterations++;
+    }
+
+    if(forward != NULL)
+        head -> next = reverseLL2(curr, k);
+
+    return prev;
+}
+
+
+/********************************************************* */
 Node* reverseInKGroups(Node* &head, int k) {
     // if linkedlist is empty or only one node present
     if(head == NULL || head -> next == NULL)
@@ -44,7 +78,8 @@ Node* reverseInKGroups(Node* &head, int k) {
         return head;
     }
     
-    return reverseLL(head, k); // updated head node
+    // return reverseLL(head, k);
+    return reverseLL2(head, k); // updated head node
 }
 
 int main() {
