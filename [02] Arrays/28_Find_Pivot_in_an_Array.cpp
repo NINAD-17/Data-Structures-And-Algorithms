@@ -3,6 +3,9 @@ using namespace std;
 
 // time complexity: O(log(n))
 int findPivot_greater(int *arr, int n) {
+    if(arr[0] <= arr[n - 1]) // Meaning: 1 2 3 4 5 6 7 is already sorted. No rotation happened.
+        return n - 1; // greatest element is already at index n - 1
+    
     int st = 0, en = n - 1;
 
     while(st < en) {
@@ -17,6 +20,9 @@ int findPivot_greater(int *arr, int n) {
 }
 
 int findPivot_smaller(int *arr, int n) {
+    if(arr[0] <= arr[n - 1]) // Meaning: 1 2 3 4 5 6 7 is already sorted. No rotation happened.
+        return 0; // smallest element is already at index 0
+
     int st = 0, en = n - 1;
 
     while(st < en) {

@@ -14,7 +14,7 @@ void intersectionOfTwoNonSortedArr_um(int *arr1, int n, int *arr2, int m, int *i
         mp[arr1[i]]++;
 
     for(int j = 0; j < m; j++) {
-        if(mp[arr2[j]] > 0) {
+        if(mp.count(arr2[j]) && mp[arr2[j]] > 0) {
             intersection[k++] = arr2[j];
             mp[arr2[j]]--;
         }

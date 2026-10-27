@@ -12,6 +12,7 @@ using namespace std;
 //     - (2,3) comes before (2,5) because 3 < 5.
 
 // Time complexity: O(n log n)
+// Space: O(log n) because of sort()
 void pairSum2_extended(int *arr, int n, int sum, int *pairsArr) {
     vector<pair<int, int>> result; // vector of pairs
     sort(arr, arr + n);
@@ -28,11 +29,12 @@ void pairSum2_extended(int *arr, int n, int sum, int *pairsArr) {
         }
     }
 
-    sort(result.begin(), result.end()); // sorts lexicographically
+    sort(result.begin(), result.end()); // sorts lexicographically: compares pair.first; breaks ties using pair.second.
 }
 
 // Optimal approach
 // Time Complexity: O(n log n)
+// Space Complexity: O(log n) -> sort() takes O(log n) space for recursion
 void pairSum2(int *arr, int n, int sum, int *pairsArr) {
     int k = 0; 
     sort(arr, arr + n); // Sort array
@@ -53,6 +55,7 @@ void pairSum2(int *arr, int n, int sum, int *pairsArr) {
 
 // Brute Force Approach
 // Time Complexity: O(n^2)
+// Space Complexity: O(log n) for sort()
 void pairSum(int *arr, int n, int sum, int *pairsArr) {
     int k = 0;
 
