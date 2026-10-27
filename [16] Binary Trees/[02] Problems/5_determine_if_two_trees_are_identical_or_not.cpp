@@ -3,8 +3,12 @@
 using namespace std;
 
 // DETERMINE IF TWO TREES ARE IDENTICAL OR NOT
-// time complexity: O(n)
-// space complexity: O(h)
+
+// 1. Recursive (Post-order Style)
+// Time Complexity: O(min(n1, n2)) — in the worst case (identical trees), O(n) where all nodes are visited
+// Auxiliary Space Complexity: O(h) recursion stack depth, where h is the tree height
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
 bool isIdentical(Node* root1, Node* root2) {
     // base cases
     if(root1 == NULL && root2 == NULL)
@@ -25,7 +29,11 @@ bool isIdentical(Node* root1, Node* root2) {
         return false;
 }
 
-// using preorder traversal
+// 2. Recursive (Pre-order)
+// Time Complexity: O(min(n1, n2)) — worst case O(n); faster in practice as it rejects value mismatches early
+// Auxiliary Space Complexity: O(h) recursion stack depth, where h is the tree height
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
 bool isIdentical_traversal(Node* root1, Node* root2) {
     // base cases
     if(root1 == NULL && root2 == NULL) return true;
@@ -39,7 +47,11 @@ bool isIdentical_traversal(Node* root1, Node* root2) {
            isIdentical_traversal(root1 -> right, root2 -> right);
 }
 
-// iterative solution
+// 3. Iterative (Level-order / BFS)
+// Time Complexity: O(min(n1, n2)) — worst case O(n) when trees are identical
+// Auxiliary Space Complexity: O(w) queue memory, where w is the maximum width of the tree
+//   - Skewed tree: O(1) (queue holds at most 1 element at any level)
+//   - Balanced tree: O(n) (widest level holds ~n/2 nodes)
 bool isIdentical_it(Node* &root1, Node* &root2) {
     if(root1 == NULL && root2 == NULL) return true;
     if((root1 == NULL && root2 != NULL) || (root1 != NULL && root2 == NULL)) return false;

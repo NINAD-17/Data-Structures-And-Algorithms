@@ -6,8 +6,10 @@ using namespace std;
 // height is the longest path between root node and leaf node
 
 // 1. Recursive Solution
-// time complexity: O(n)
-// space complexity: O(h) // for skew tree it's O(n)
+// Time Complexity: O(n)
+// Auxillary Space Complexity: O(h)
+//   - Balanced Tree: O(log n)
+//   - Skewed Tree: O(n)
 int heightOfBinTree(Node* &root) {
     if(root == NULL)
         return 0;
@@ -19,8 +21,10 @@ int heightOfBinTree(Node* &root) {
 }
 
 // 2. Iterative solution using level order traversal
-// time complexity: O(n)
-// space complexity: O(h) // for skew tree it's O(n)
+// Time Complexity: O(n) — visits every node exactly once
+// Auxiliary Space Complexity: O(w), where w is the maximum width of the tree
+//   - In terms of n: O(n) in the worst case (balanced/complete tree holds ~n/2 leaves -  bottom level has roughly n/2 nodes)
+//   - Skewed tree: O(1) (queue holds at most 1 element at any time)
 int findHeight(Node* &root) {
     if(root == NULL) return 0;
 

@@ -15,8 +15,13 @@ int height(Node* root) { // time complexity: O(n)
     return max(left, right) + 1;
 }
 
-// time complexity: O(n^2)
-// space complexity: O(n)
+// --- Unoptimized Solution ---
+// Time Complexity: O(n * h)
+//   - Skewed tree (worst case): O(n^2)
+//   - Balanced tree (best/average case): O(n log n)
+// Auxiliary Space Complexity: O(h) — maximum active recursion stack depth
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
 bool isBalanced(Node* root) {
     if(root == NULL)
         return true;
@@ -32,9 +37,11 @@ bool isBalanced(Node* root) {
         return false;
 }
 
-// optimized
-// time complexity: O(n)
-// space complexity: O(n)
+// Optimized Solution
+// Time Complexity: O(n)
+// Auxiliary Space Complexity: O(h) — recursion stack depth
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
 pair<bool, int> isBalancedFast(Node* root) {
     if(root == NULL) {
         pair<bool, int> p = make_pair(true, 0);

@@ -4,6 +4,15 @@ using namespace std;
 
 // SUM OF LONGEST BLOODLINE OF A TREE
 // SUM OF NODES ON THE LONGEST PATH FROM ROOT TO LEAF NODE
+/*
+            4
+           / \
+          2   5
+         / \  / \
+        7   1 2  3
+             \
+              6
+*/
 
 // --- recursive approach ---
 // time complexity: O(n)
@@ -37,7 +46,7 @@ pair<int, int> sumOfLongestBloodline(Node* &root) {
     if(root == NULL)
         return make_pair(0, 0);
 
-    int currLen = 0;
+    int currLen = 0; // you can set it to 1 as currLen = 1; to make logic cleaner. if done then remove currLen++ from solve()'s 2nd if case.
     int maxLen = 0;
 
     int currSum = 0;
@@ -49,9 +58,22 @@ pair<int, int> sumOfLongestBloodline(Node* &root) {
 
 int main() {
 
-    Node* root = NULL;
-    root = buildTree(root);
+    // Node* root = NULL;
+    // root = buildTree(root);
 
+    // create nodes manually
+    Node* root = new Node(4);
+    root->left = new Node(2);
+    root->right = new Node(5);
+
+    root->left->left = new Node(7);
+    root->left->right = new Node(1);
+    root->left->right->left = new Node(6);
+
+    root->right->left = new Node(2);
+    root->right->right = new Node(3);
+
+    // visualize tree
     levelOrderIteratively(root);
 
     pair<int, int> ans = sumOfLongestBloodline(root);

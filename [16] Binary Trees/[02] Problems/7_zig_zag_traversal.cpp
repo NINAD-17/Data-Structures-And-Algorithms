@@ -5,8 +5,11 @@
 using namespace std;
 
 // ZIG ZAG TRAVERSAL (SPIRAL TRAVERSAL)
-// time complexity: O(n)
-// space complexity: O(n)
+// Time Complexity: O(n) — visits every node once and processes each element in tempAns once
+// Auxiliary Space Complexity: O(w) — where w is the maximum width of the tree
+//   - Skewed tree: O(1) (queue and tempAns hold at most 1 element at any level)
+//   - Balanced tree: O(n) (widest level holds ~n/2 nodes)
+// Total Space Complexity: O(n) to store and return the traversal result vector (if consider 'ans' vector)
 
 vector<int> zigZagTraversal(Node* root) {
     vector<int> ans;

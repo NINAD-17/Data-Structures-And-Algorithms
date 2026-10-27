@@ -9,8 +9,6 @@ using namespace std;
 //      2. find diameter of right tree
 //      3. find height of both tree (left and right)
 
-// time complexity: O(n^2) // as we're calling height() from diameter() both have O(n) complexity
-// space complexity: O(n)
 int height(Node* &root) {
     // base case
     if(root == NULL)
@@ -22,6 +20,13 @@ int height(Node* &root) {
     return max(leftNode, rightNode) + 1;
 }
 
+// --- Unoptimized Solution ---
+// Time Complexity: O(h * n)
+//   - Worst Case (Skewed tree): O(n^2)
+//   - Best/Average Case (Balanced tree): O(n log n)
+// Auxiliary Space Complexity: O(h) (maximum depth of recursion call stack)
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
 int diameter(Node* &root) {
     // base case
     if(root == NULL)
@@ -57,10 +62,14 @@ int diameterWithComments(Node* root) {
     return max(leftCnt, max(rightCnt, height));
 }
 
-// --- optimized solution ---
-// pair<diameter, height> therefore we remove height()
-// time complexity: O(n)
-// space complexity: O(h) ... h is height
+// --- Optimized Solution ---
+// Returns pair<int, int> where:
+//   first  = diameter of the subtree
+//   second = height of the subtree
+// Time Complexity: O(n) — visits each node exactly once
+// Auxiliary Space Complexity: O(h) — recursion stack depth
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
 pair<int, int> diameterFast(Node* &root) {
     // base case
     if(root == NULL) {

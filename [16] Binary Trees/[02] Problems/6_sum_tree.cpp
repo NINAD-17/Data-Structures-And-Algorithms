@@ -19,6 +19,37 @@ using namespace std;
 // Node(20) = 6 + 4 + (all grandchildren sums)
 
 
+// More optimized approach using short circuit means don't traverse all nodes if you already found that it's not a sum tree
+pair<int, bool> isSumTree_3(Node* root) {
+    if (root == NULL)
+        return {0, true};
+
+    if (root->left == NULL && root->right == NULL)
+        return {root->data, true};
+
+    pair<int, bool> leftAns = isSumTree(root->left);
+    // Early exit: if left subtree is not a Sum Tree, skip the right subtree completely
+    if (!leftAns.second) {
+        return {0, false};
+    }
+
+    pair<int, bool> rightAns = isSumTree(root->right);
+    // Early exit: if right subtree is not a Sum Tree, skip parent validation
+    if (!rightAns.second) {
+        return {0, false};
+    }
+
+    // Now validate the current node
+    bool condn = (root->data == leftAns.first + rightAns.first);
+
+    if (condn) {
+        return {2 * root->data, true};
+    }
+
+    return {0, false};
+}
+
+
 // Optimized Approach
 // time complexity: O(n)
 // space complexity: O(n)

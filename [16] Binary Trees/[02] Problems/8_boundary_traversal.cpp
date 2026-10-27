@@ -5,10 +5,12 @@
 using namespace std;
 
 // BOUNDARY TRAVERSAL
-// time complextiy: O(n)
-// space complexity: O(n)
 
-// traverse left side
+// 1. Traverse Left Boundary (Excluding Leaves)
+// Time Complexity: O(h) — walks a single path down to the leaf
+// Auxiliary Space: O(h) — recursion stack along one branch
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
 void traverseLeft(Node* root, vector<int> &ans) {
     // if root is null or node is a leaf node
     if((root == NULL) || (root -> left == NULL && root -> right == NULL))
@@ -22,7 +24,11 @@ void traverseLeft(Node* root, vector<int> &ans) {
         traverseLeft(root -> right, ans);
 }
 
-// traverse all leaf nodes
+// 2. Traverse All Leaf Nodes
+// Time Complexity: O(n) — visits every node in the subtree to check for leaves
+// Auxiliary Space: O(h) — recursion stack depth
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
 void traverseLeaf(Node* root, vector<int> &ans) {
     // base case
     if(root == NULL)
@@ -38,7 +44,11 @@ void traverseLeaf(Node* root, vector<int> &ans) {
     traverseLeaf(root -> right, ans);
 }
 
-// traverse right side
+// 3. Traverse Right Boundary (Bottom-up, Excluding Leaves)
+// Time Complexity: O(h) — walks a single path down to the leaf
+// Auxiliary Space: O(h) — recursion stack along one branch
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
 void traverseRight(Node* root, vector<int> &ans) {
     // base case
     if((root == NULL) || (root -> left == NULL && root -> right == NULL))
@@ -53,6 +63,12 @@ void traverseRight(Node* root, vector<int> &ans) {
     ans.push_back(root -> data); 
 }
 
+// --- Overall Boundary Traversal ---
+// Time Complexity: O(n) — dominated by leaf traversal O(n) + boundary paths O(h)
+// Auxiliary Space Complexity: O(h) — maximum active recursion depth (stack is reused)
+//   - Skewed tree: O(n)
+//   - Balanced tree: O(log n)
+// Total Space Complexity: O(n) if counting the return vector 'ans'
 vector<int> boundary(Node* root) {
     vector<int> ans;
     
