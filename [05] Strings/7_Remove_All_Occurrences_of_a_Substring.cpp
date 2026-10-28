@@ -3,12 +3,25 @@ using namespace std;
 
 // https://leetcode.com/problems/remove-all-occurrences-of-a-substring/
 
+// Time: O(n * m)
+// Space: O(n)
+string removeOccurrences(string &s, string &part) {
+    string stk = "";
+    int m = part.length();
 
+    for(char ch: s) {
+        stk.push_back(ch);
 
+        if(stk.length() >= m) {
+            if(stk.compare(stk.length() - m, m, part) == 0) {
+                for(int i = 0; i < m; i++)
+                    stk.pop_back();
+            }
+        }
+    }
 
-/*******/
-// Solve this problem using stack for efficient solution -> Time complexity: O(n)
-/******/
+    return stk;
+}
 
 // Time Complexity: The time complexity of the removeAllSubstrings function is O(n * m), 
 // where n is the length of the input string str and m is the length of the substring part.
