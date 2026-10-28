@@ -28,26 +28,6 @@ void rotateInPlace(int *arr, int n, int rotateBy) {
     reverseArr(arr, rotateBy, n - 1);
 }
 
-// Rotate to left by right rotation algorithm
-void rotateToLeft(int *arr, int n, int rotateBy) {
-    if(n <= 1)
-        return ;
-
-    // here, rotateBy factor is for left rotation
-    rotateBy = (((rotateBy % n) + n) % n); // rotate to right by rotateBy factor
-    rotateBy = (n - rotateBy) % n; // convert left rotation to equivalent right rotation
-
-    if(rotateBy == 0)
-        return ;
-
-    // Apply right rotation
-    reverseArr(arr, 0, n - 1);
-
-    reverseArr(arr, 0, rotateBy - 1);
-
-    reverseArr(arr, rotateBy, n - 1);
-}
-
 // ------------------------------------------------------------------------
 
 // Time Complexity: O(n)
