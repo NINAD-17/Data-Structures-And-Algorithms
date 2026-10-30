@@ -3,6 +3,15 @@
 #include <algorithm>
 using namespace std;
 
+// -----------
+// Fix: Remove sort(ans.begin(), ans.end())
+//      If you check the directions in strict alphabetical order: ('D', 'L', 'R', 'U') The paths are naturally discovered in sorted order
+// Fix: You can remove visited matrix and use maze directly by updating maze[x][y] = 0 and then again restoring value on backtrack
+// -----------
+
+// Time: $O(4^{N^2})$
+// Space: O(N^2)
+//        visited matrix and recursion both take O(N^2)
 bool isSafe(int x, int y, int size, vector<vector<int>> &visited, vector<vector<int>> &maze) {
     // curr location should be in the boundary of maze and it should not be visited and curr location should be open path
     if((x >= 0 && x < size) && (y >= 0 && y < size) && visited[x][y] == 0 && maze[x][y] == 1)

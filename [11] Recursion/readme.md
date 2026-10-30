@@ -290,3 +290,333 @@ This solves to `O(2^n)`.
 
 - **Mini table**: i from 0 to 7 with masks for j = 0,1,2
     ![alt text](mini_table.png)
+
+
+### 4. Tower of Hanoi 
+
+Why the Total Moves are $2^n - 1$
+
+Let $T(n)$ be the total moves for $n$ disks:
+
+- Move $n - 1$ disks: $T(n - 1)$
+
+- Move $1$ disk: $1$
+
+- Move $n - 1$ disks again: $T(n - 1)$
+
+$$T(n) = 2 \cdot T(n - 1) + 1$$
+
+Unrolling this recurrence:
+
+- $T(1) = 1 = 2^1 - 1$
+
+- $T(2) = 2(1) + 1 = 3 = 2^2 - 1$
+
+- $T(3) = 2(3) + 1 = 7 = 2^3 - 1$
+
+- $T(n) = 2^n - 1$
+
+#### Dry Run:
+
+Define the function signature clearly by its roles:
+
+$$\text{solve}(n, \text{Source}, \text{Destination}, \text{Helper})$$
+
+The three operations inside each call are:
+
+1. **Left Child:** $\text{solve}(n - 1, \text{Source}, \text{Helper}, \text{Destination})$
+2. **Current Node Action:** Move Disk $n$ from $\text{Source} \rightarrow \text{Destination}$
+3. **Right Child:** $\text{solve}(n - 1, \text{Helper}, \text{Destination}, \text{Source})$
+
+This produces a strict **In-Order Traversal** ($\text{Left} \rightarrow \text{Root} \rightarrow \text{Right}$).
+
+---
+
+### The Complete Recursion Tree for `solve(3, A, C, B)`
+
+```text
+                                solve(3, A, C, B)
+                                /       |       \
+               [Step 1 to 3]   /    [Step 4]     \   [Step 5 to 7]
+                              /   Move Disk 3     \
+                             /       A -> C        \
+             solve(2, A, B, C)                     solve(2, B, C, A)
+             /       |       \                     /       |       \
+     [Step 1]/    [Step 2]    \[Step 3]    [Step 5]/    [Step 6]    \[Step 7]
+            /   Move Disk 2    \                  /   Move Disk 2    \
+           /       A -> B       \                /       B -> C       \
+solve(1, A, C, B)      solve(1, C, B, A)  solve(1, B, A, C)      solve(1, A, C, B)
+      |                       |                 |                       |
+  [Step 1]                [Step 3]          [Step 5]                [Step 7]
+Move Disk 1             Move Disk 1       Move Disk 1             Move Disk 1
+   A -> C                  C -> B            B -> A                  A -> C
+
+```
+
+---
+
+### Step-by-Step Chronological Execution Order
+
+Follow the recursion stack in the exact order C++ executes it:
+
+#### Branch 1: Clearing $n - 1$ Disks to Peg B
+
+1. **Call `solve(3, A, C, B)**`
+* Calls Left Child: `solve(2, A, B, C)`
+
+
+2. **Inside `solve(2, A, B, C)**`
+* Calls Left Child: `solve(1, A, C, B)`
+
+
+3. **Inside `solve(1, A, C, B)` (Base Case):**
+* **`Step 1:` Move Disk 1 from A $\rightarrow$ C**
+* Returns back to `solve(2, A, B, C)`.
+
+
+4. **Back in `solve(2, A, B, C)`:**
+* **`Step 2:` Move Disk 2 from A $\rightarrow$ B**
+* Calls Right Child: `solve(1, C, B, A)`
+
+
+5. **Inside `solve(1, C, B, A)` (Base Case):**
+* **`Step 3:` Move Disk 1 from C $\rightarrow$ B**
+* Returns back to `solve(2, A, B, C)`.
+
+
+
+* `solve(2, A, B, C)` is now completely finished and returns to the root `solve(3, A, C, B)`.
+
+> **State Check after Step 3:**
+> Peg A has only Disk 3. Peg B has Disks 1 & 2. Peg C is completely empty.
+
+---
+
+#### Branch 2: Moving the Largest Disk to Peg C
+
+6. **Back at Root `solve(3, A, C, B)`:**
+* **`Step 4:` Move Disk 3 from A $\rightarrow$ C**
+* Calls Right Child: `solve(2, B, C, A)`
+
+
+
+> **State Check after Step 4:**
+> Peg A is empty. Peg B has Disks 1 & 2. Peg C has Disk 3 at the bottom.
+
+---
+
+#### Branch 3: Moving the Remaining Disks from Peg B to Peg C
+
+7. **Inside `solve(2, B, C, A)`:**
+* Calls Left Child: `solve(1, B, A, C)`
+
+
+8. **Inside `solve(1, B, A, C)` (Base Case):**
+* **`Step 5:` Move Disk 1 from B $\rightarrow$ A**
+* Returns back to `solve(2, B, C, A)`.
+
+
+9. **Back in `solve(2, B, C, A)`:**
+* **`Step 6:` Move Disk 2 from B $\rightarrow$ C**
+* Calls Right Child: `solve(1, A, C, B)`
+
+
+10. **Inside `solve(1, A, C, B)` (Base Case):**
+* **`Step 7:` Move Disk 1 from A $\rightarrow$ C**
+* Returns back to `solve(2, B, C, A)`.
+
+
+
+* `solve(2, B, C, A)` finishes and returns to root. Entire recursion terminates.
+
+---
+
+### Execution Summary Table
+
+| Step # | Function Frame | Action Taken | Peg A | Peg B | Peg C |
+| --- | --- | --- | --- | --- | --- |
+| **Start** | Initial State | — | `[3, 2, 1]` | `[]` | `[]` |
+| **1** | `solve(1, A, C, B)` | Move Disk 1: **A $\rightarrow$ C** | `[3, 2]` | `[]` | `[1]` |
+| **2** | `solve(2, A, B, C)` | Move Disk 2: **A $\rightarrow$ B** | `[3]` | `[2]` | `[1]` |
+| **3** | `solve(1, C, B, A)` | Move Disk 1: **C $\rightarrow$ B** | `[3]` | `[2, 1]` | `[]` |
+| **4** | `solve(3, A, C, B)` | Move Disk 3: **A $\rightarrow$ C** | `[]` | `[2, 1]` | `[3]` |
+| **5** | `solve(1, B, A, C)` | Move Disk 1: **B $\rightarrow$ A** | `[1]` | `[2]` | `[3]` |
+| **6** | `solve(2, B, C, A)` | Move Disk 2: **B $\rightarrow$ C** | `[1]` | `[]` | `[3, 2]` |
+| **7** | `solve(1, A, C, B)` | Move Disk 1: **A $\rightarrow$ C** | `[]` | `[]` | `[3, 2, 1]` |
+
+
+---
+
+
+### 5. Subsets II Explanation
+
+The fundamental challenge in **Subsets II** is handling duplicate numbers (like `[1, 2, 2]`).
+
+If you treat identical numbers as distinct entities:
+
+* Picking the first `2` gives `[1, 2]`.
+* Skipping the first `2` and picking the second `2` also gives `[1, 2]`.
+
+To prevent identical subsets, both approaches follow one golden rule:
+
+> **If there are duplicate numbers, you can only pick the $k$-th duplicate if you have already picked the $(k-1)$-th duplicate.**
+
+Let's trace both approaches step-by-step using:
+
+
+$$\text{nums} = [1, 2_a, 2_b]$$
+
+
+*(We use subscripts $a$ and $b$ just to distinguish the two identical `2`s).*
+
+---
+
+#### Approach 1: Include / Exclude with `!used[index - 1]`
+
+Here, the recursion is a **binary decision tree**: at each index, you make two decisions:
+
+1. **Include** `nums[index]`
+2. **Exclude** `nums[index]`
+
+The check:
+
+```cpp
+if (!(index > 0 && nums[index] == nums[index - 1] && !used[index - 1]))
+
+```
+
+In plain words:
+
+> *"If this number is identical to the previous one, but the previous one was **EXCLUDED** (`!used[index - 1]`), then I am **FORBIDDEN** from including this number."*
+
+##### Why?
+
+* If you **include** $2_a$ and then **include** $2_b$, you get $[1, 2, 2]$. (Valid)
+* If you **include** $2_a$ and **exclude** $2_b$, you get $[1, 2]$. (Valid)
+* If you **exclude** $2_a$ and **include** $2_b$, you also get $[1, 2]$. **(DUPLICATE!)**
+
+Checking `!used[index - 1]` prunes that third branch completely.
+
+```text
+                                  []
+                     /                          \
+            Include 1                           Exclude 1
+             used=[T]                            used=[F]
+              [1]                                  []
+           /        \                           /        \
+      Inc 2_a      Exc 2_a                 Inc 2_a      Exc 2_a
+     used=[T,T]   used=[T,F]              used=[F,T]   used=[F,F]
+       [1, 2]        [1]                     [2]           []
+       /    \        /    \                  /    \        /    \
+    Inc 2_b Exc 2_b Inc 2_b Exc 2_b       Inc 2_b Exc 2_b Inc 2_b Exc 2_b
+    [1,2,2] [1,2]  BLOCKED!   [1]          [2,2]   [2]   BLOCKED!   []
+                      ^                                     ^
+     (2_a was excluded,                    (2_a was excluded,
+      cannot include 2_b!)                  cannot include 2_b!)
+
+```
+
+#### Final Unique Subsets Collected at Leaves:
+
+`[1, 2, 2]`, `[1, 2]`, `[1]`, `[2, 2]`, `[2]`, `[]`. Exactly 6 unique subsets.
+
+---
+
+### Approach 2: Loop-Based Backtracking (`i > start && nums[i] == nums[i - 1]`)
+
+This is the standard pattern for subset and combination problems.
+
+Instead of a binary tree, each node represents a subset, and the loop branches out to choose the **next element** to append:
+
+```cpp
+ans.push_back(current); // Every node itself is a complete subset!
+
+for (int i = start; i < nums.size(); i++) {
+    if (i > start && nums[i] == nums[i - 1]) continue;
+    ...
+}
+
+```
+
+The check:
+
+```cpp
+if (i > start && nums[i] == nums[i - 1]) continue;
+
+```
+
+* `i == start`: This is the **first choice** available at this level of the tree. Even if it is a duplicate of a previously committed parent number, it is valid to take it as the next element in sequence.
+* `i > start`: This means we are considering an **alternative sibling choice** at the same depth. If `nums[i] == nums[i - 1]`, picking this alternative would create a branch identical to the one just explored by `i - 1`.
+
+#### Visual Tree for `nums = [1, 2_a, 2_b]`:
+
+```text
+Level 0:                           []  (added to ans)
+                       /           |           \
+                  i=0 /       i=1  |            \ i=2
+               pick 1/          pick 2_a         \ pick 2_b (SKIPPED!
+                    /              |              \ i > start && 2_b == 2_a)
+Level 1:          [1]             [2_a]
+                /     \             |
+           i=1 /   i=2 \       i=2  | pick 2_b
+       pick 2_a  pick 2_b           |
+             /   (SKIPPED!        [2_a, 2_b]
+            /   i > start)
+Level 2:  [1, 2_a]
+            |
+        i=2 | pick 2_b
+            |
+Level 3:  [1, 2_a, 2_b]
+
+```
+
+#### Step-by-Step Execution:
+
+1. **At `start = 0`, `current = []`:**
+* Push `[]` to `ans`.
+* Loop `i = 0`: Pick `1`. Recurse with `start = 1`, `current = [1]`.
+
+
+2. **At `start = 1`, `current = [1]`:**
+* Push `[1]` to `ans`.
+* Loop `i = 1`: `i == start`, pick `2_a`. Recurse with `start = 2`, `current = [1, 2_a]`.
+
+
+3. **At `start = 2`, `current = [1, 2_a]`:**
+* Push `[1, 2_a]` to `ans`.
+* Loop `i = 2`: `i == start`, pick `2_b`. Recurse with `start = 3`, `current = [1, 2_a, 2_b]`.
+
+
+4. **At `start = 3`, `current = [1, 2_a, 2_b]`:**
+* Push `[1, 2_a, 2_b]` to `ans`.
+* Loop condition `i < 3` fails. Backtracks to step 3, then step 2.
+
+
+5. **Back at `start = 1`, loop continues to `i = 2`:**
+* `i = 2`, `start = 1` $\implies i > start$.
+* `nums[2] == nums[1]` (`2_b == 2_a`).
+* **`continue` triggers!** Skipping `2_b` prevents generating another `[1, 2]`.
+
+
+6. **Back at `start = 0`, loop continues to `i = 1`:**
+* Pick `2_a`. Generates `[2]` and `[2, 2]`.
+
+
+7. **Back at `start = 0`, loop continues to `i = 2`:**
+* `i = 2`, `start = 0` $\implies i > start$.
+* `nums[2] == nums[1]` $\implies$ **`continue` triggers!** Skipping `2_b` prevents generating another `[2]` and `[2, 2]`.
+
+
+
+---
+
+### Comparison of the Duplicate Checks
+
+| Feature | Approach 1 (Include / Exclude) | Approach 2 (Loop-based) |
+| --- | --- | --- |
+| **Structure** | Binary tree (depth = $N$) | $N$-ary tree (depth $\le N$) |
+| **When to add to `ans**` | Only at leaf nodes (`index >= n`) | At every node visited |
+| **Condition** | `!used[index - 1]` | `i > start` |
+| **Intuition** | *"Never include duplicate unless prior duplicate is already part of my set."* | *"At the current position, only try the first occurrence among identical numbers."* |
+
+start duplicate-skipping logic?" query="Explain how LeetCode 40 (Combination Sum II) uses the loop-based backtracking duplicate-skipping check." />

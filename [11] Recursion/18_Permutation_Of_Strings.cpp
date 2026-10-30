@@ -10,7 +10,7 @@ using namespace std;
 // Time: O(n * n!)      
 // Auxillary Space: O(n) because of recursion stack
 //      Total Space: O(n * n!)  You store all n! permutations, each of length n → O(n · n!).
-void solve(vector<int> arr, int size, vector<vector<int>> &ans, int index) {
+void solve(vector<int> &arr, int size, vector<vector<int>> &ans, int index) {
     // Base Case
     if(index >= size) { 
         ans.push_back(arr);

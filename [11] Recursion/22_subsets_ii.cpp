@@ -1,8 +1,10 @@
+#include <iostream>
 #include <algorithm>
 #include <vector>
 using namespace std;
 
 // Leetcode: https://leetcode.com/problems/subsets-ii/description/
+// Visit readme.md for visualized dry run and explanation
 
 // Approach 2: The Loop-Based Backtracking (Most Common for Subsets)
 // Time Complexity: O(n * 2^n)
@@ -23,7 +25,7 @@ void backtrack(const vector<int> &nums, int start, vector<int> &current, vector<
     }
 }
 
-vector<vector<int>> subsetsWithDup(vector<int> &nums) {
+vector<vector<int>> subsetsWithDup2(vector<int> &nums) {
     vector<vector<int>> ans;
     vector<int> current;
 
@@ -42,10 +44,14 @@ void solve(const vector<int> &nums, int index, vector<bool> &used, vector<int> &
 
     // Choice 1: Include nums[index]
     // If nums[index] == nums[index - 1] and previous was NOT included, we CANNOT include this one
-    if(!(index > 0 && nums[index] == nums[index - 1] && !used[index - 1])) {
+    // 1. index == 0 -> include
+    // 2. index == 0 false; nums[index] != nums[index - 1] = false (means equal); used[index - 1] = true (then include - else don't enter in 'if')
+    if(index == 0 || nums[index] != nums[index - 1] || used[index - 1]) {
         used[index] = true;
         current.push_back(nums[index]);
+        
         solve(nums, index + 1, used, current, ans);
+        
         current.pop_back();
         used[index] = false;
     }
@@ -63,4 +69,20 @@ vector<vector<int>> subsetsWithDup(vector<int> &nums) {
     solve(nums, 0, used, current, ans);
 
     return ans;
+}
+
+int main() {
+    vector<int> nums = {1, 2, 2};
+
+    vector<vector<int>> ans = subsetsWithDup(nums);
+
+    for (const vector<int> &v : ans) {
+        cout << "[ ";
+        for (int element : v) {
+            cout << element << " ";
+        }
+        cout << "]\n";
+    }
+
+    return 0;
 }

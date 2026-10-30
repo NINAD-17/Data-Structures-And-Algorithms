@@ -5,13 +5,18 @@ using namespace std;
 
 #define KEYPAD {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"}
 
-// --- recursive apporach ---
-void generateCombinations(string inputNo, string output, int index, vector<string> &ans) {
+// --- Recursive Apporach ---
+// Time Complexity: O(N * 4^N)
+// Auxillary Space Complexity: O(N)
+//      - Total (including ans) it's O(N * 4^N)
+void generateCombinations(string &inputNo, string &output, int index, vector<string> &ans) {
     // Base Case
     if(index >= inputNo.size()) {
         ans.push_back(output);
         return ;
     }
+
+    if (inputNo.empty()) return ;
 
     // Keypad
     string keypad[] = KEYPAD;
@@ -26,7 +31,7 @@ void generateCombinations(string inputNo, string output, int index, vector<strin
     }
 }
 
-vector<string> letterCombinations(string inputNo) {
+vector<string> letterCombinations(string &inputNo) {
     vector<string> ans;
     string output;
     int index = 0;

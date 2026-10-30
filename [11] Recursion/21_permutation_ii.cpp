@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <unordered_set>
 #include <vector>
@@ -38,7 +39,7 @@ void backtrack(vector<int> &nums, vector<bool> &used, vector<int> &current, vect
     }
 }
 
-vector<vector<int>> permuteUnique(vector<int> &nums) {
+vector<vector<int>> permuteUnique2(vector<int> &nums) {
     vector<vector<int>> ans;
     vector<int> current;
     vector<bool> used(nums.size(), false);
@@ -82,4 +83,19 @@ vector<vector<int>> permuteUnique(vector<int> &nums) {
     vector<vector<int>> ans;
     backtrack(nums, 0, ans);
     return ans;
+}
+
+int main() {
+    vector<int> nums = {1, 1, 2};
+
+    vector<vector<int>> ans = permuteUnique(nums);
+
+    for(vector<int> &v: ans) {
+        for(int element: v) {
+            cout << element << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
 }
