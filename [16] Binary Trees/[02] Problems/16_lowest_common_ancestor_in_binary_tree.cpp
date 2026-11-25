@@ -12,7 +12,8 @@ Node *lowestCommonAncestor(Node *root, int n1, int n2) {
         return NULL;
 
     if(root->data == n1 || root->data == n2) {
-        return root;
+        return root; // <--- STOPS IMMEDIATELY BEFORE VISITING CHILDREN!
+        // Both n1 and n2 are guaranteed to exist. So if n2 is hiding inside n1's subtree, n1 is automatically the LCA anyway—no need to search below it.
     }
 
     Node *leftAns = lowestCommonAncestor(root->left, n1, n2);
@@ -37,6 +38,12 @@ Node *findLCA(Node *root, int n1, int n2, bool &found1, bool &found2) {
     // 1. Post-order traversal: ALWAYS visit left and right first
     // Never return early, so we explore subtrees even if root matches n1 or n2
     Node *leftAns = findLCA(root->left, n1, n2, found1, found2);
+
+    // EARLY EXIT: If both n1 and n2 were already found in the left subtree,
+    // leftAns is already the true LCA. No need to touch the right subtree!
+    if (found1 && found2)
+        return leftAns;
+
     Node *rightAns = findLCA(root->right, n1, n2, found1, found2);
 
     // 2. Check if the current node matches n1 or n2

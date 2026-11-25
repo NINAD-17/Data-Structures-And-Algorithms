@@ -222,6 +222,194 @@ Therefore, the Auxiliary Space Complexity is simply:$$\mathbf{O(h)}$$
 - Skewed Tree: $\mathbf{O(n)}$
 - Balanced Tree: $\mathbf{O(\log n)}$
 
+---
+
+## 4. K-Sum Paths in a Binary Tree (LeetCode 437)
+
+### Core Intuition: Prefix Sum on a Tree
+Every root-to-node path in a binary tree behaves just like a **1D subarray**. 
+
+If the running sum from the root down to an ancestor node is `oldSum`, and the running sum down to the current node is `currSum`, then the sum of the downward path segment strictly *between* them is:
+
+$$\text{segmentSum} = \text{currSum} - \text{oldSum}$$
+
+We want $\text{segmentSum} = \text{targetSum}$. Rearranging the equation gives:
+
+$$\text{oldSum} = \text{currSum} - \text{targetSum}$$
+
+Instead of re-scanning all ancestors at every node ($O(N^2)$), we maintain a hash map `prefixCount` storing `{prefix_sum : frequency}` along the **current active root-to-node path**. At any node, we simply ask: *"How many ancestors above me had a running sum equal to `currSum - targetSum`?"*
+
+
+### Step-by-Step Breakdown
+
+#### 1. Why `prefixCount[0] = 1`?
+This handles paths that **start directly at the `root` node** (meaning no prefix is subtracted).
+
+* **Example:** Suppose `root = 8` and `targetSum = 8`.
+* At the root: `currSum = 8`.
+* `needed = currSum - targetSum = 8 - 8 = 0`.
+* Without `prefixCount[0] = 1`, `needed` (`0`) wouldn't exist in the map, and the valid single-node path `[8]` starting from the root would be missed!
+* Think of `0` as the "empty path sum" right before entering the root.
+
+#### 2. How `countPaths` Works (4 Phases at Each Node)
+
+1. **Extend Running Sum & Check Valid Paths:**
+   * Add `root->data` to `currSum`.
+   * Calculate `needed = currSum - targetSum`.
+   * If `needed` exists in `prefixCount`, add `prefixCount[needed]` to `totalPaths`. Each occurrence represents a distinct ancestor where a valid `targetSum` path starts and ends at the current node.
+
+2. **Record Current Prefix Sum:**
+   * `prefixCount[currSum]++` adds the current node's running sum so its descendants (left and right children) can use it.
+
+3. **Recurse Left & Right:**
+   * Explore both subtrees while carrying the updated `currSum` and `prefixCount`.
+
+4. **Backtrack (Crucial Cleanup Step):**
+   * `prefixCount[currSum]--` (and `erase` if frequency hits `0`) happens **after** both left and right recursive calls finish.
+   * **Why?** Because a valid path must go strictly **downwards** (parent $\to$ child). Once we finish exploring a node's subtree and return back up to its parent, `currSum` is no longer an ancestor of the sibling branch. Leaving it in the map would falsely match nodes across completely separate branches!
+
+#### Dry Run Example
+
+**Tree:** `10 -> 5 -> 3` (left chain), `targetSum = 8`
+
+| Step / Node | `currSum` | `needed` (`currSum - 8`) | Map Lookup (`prefixCount[needed]`) | `totalPaths` Found | Map State After Recording |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Start** | `0` | — | — | `0` | `{0: 1}` |
+| **Visit `10`** | `10` | `2` | `0` (not found) | `0` | `{0: 1, 10: 1}` |
+| **Visit `5`** | `15` | `7` | `0` (not found) | `0` | `{0: 1, 10: 1, 15: 1}` |
+| **Visit `3`** | `18` | `10` | **`1`** (found `10`!) | **`1`** (path `5 -> 3`) | `{0: 1, 10: 1, 15: 1, 18: 1}` |
+| **Backtrack `3`** | — | — | — | — | `{0: 1, 10: 1, 15: 1}` (`18` erased) |
+
+#### Complexity Analysis
+* **Time Complexity:** **$O(N)$** — Every node in the tree is visited once, and hash map lookups/updates take $O(1)$ average time.
+* **Space Complexity:** **$O(H)$** — The recursion stack and hash map hold at most $H$ entries at once (where $H$ is the height of the tree: $O(\log N)$ balanced, $O(N)$ skewed).
+
+---
+
+## K Sum Paths
+
+### 1. How Did This Approach Even Come About?
+
+Think about how you solve the exact same problem on a **1D array** first (LeetCode 560: *Subarray Sum Equals K*):
+Suppose you have an array `[10, -2, 2, 5, 3]` and `targetSum = 8`.
+
+If you keep adding numbers as you walk forward (`currSum`), look at the running sums:
+
+* Before starting: `0`
+* After `10`: `10`
+* After `-2`: `8`
+* After `+2`: `10`  *(Notice `10` appeared a **second time** because `-2 + 2 = 0`!)*
+* After `+5`: `15`
+* After `+3`: `18`
+
+Now you are standing at `3` (`currSum = 18`). You want a subarray ending at `3` that sums to `8`.
+That means you need to chop off a prefix from the beginning whose sum was `18 - 8 = 10`.
+Look back at the running sums above: **how many times did `10` appear?**
+**Twice!**
+
+1. Chop off `[10]` $\implies$ remaining subarray is `[-2, 2, 5, 3]` (sum = `8`).
+2. Chop off `[10, -2, 2]` $\implies$ remaining subarray is `[5, 3]` (sum = `8`).
+
+Because `10` appeared **2 times** earlier in the path, there are **2 distinct starting points** that both end at `3` and sum to `8`! That is why the map stores `{prefixSum : count}` and why we do `totalPaths += prefixCount[needed]`.
+
+A binary tree is just a collection of 1D arrays sharing a root—every time we go down a branch, we add to the map, and every time we climb back up (backtrack), we remove from the map so sibling branches don't mix.
+
+
+### 2. Full Dry Run on a Tree (With Duplicates & Right Branch)
+
+Let's use **`targetSum = 8`** on this tree:
+
+```text
+          10           <-- Root
+         /  \
+       -2    8         <-- Right child '8' already equals targetSum!
+       /
+      2                <-- Causes running sum '10' to repeat!
+     /
+    5
+   /
+  3                    <-- Ends with TWO valid paths ending here!
+
+```
+
+We start with `prefixCount = {0: 1}` and `totalPaths = 0`.
+
+
+#### Phase A: Going Down the Long Left Branch (`10 -> -2 -> 2 -> 5 -> 3`)
+
+1. **At Node `10` (Root):**
+* `currSum = 0 + 10 = 10`
+* `needed = 10 - 8 = 2`. Is `2` in map? **No.** (`+0` paths)
+* Record `10`: `prefixCount` is now **`{0: 1, 10: 1}`**
+
+
+2. **At Node `-2`:**
+* `currSum = 10 + (-2) = 8`
+* `needed = 8 - 8 = 0`. Is `0` in map? **YES! `prefixCount[0] = 1**`
+* *Why?* Because `prefixCount[0] = 1` catches the path starting right from the root: **`[10 -> -2]`** (sum = `8`).
+* `totalPaths` becomes **`1`**.
+
+
+* Record `8`: `prefixCount` is now **`{0: 1, 10: 1, 8: 1}`**
+
+
+3. **At Node `2`:**
+* `currSum = 8 + 2 = 10`
+* `needed = 10 - 8 = 2`. Is `2` in map? **No.** (`+0` paths)
+* Record `10`: `10` was ALREADY in the map! Its count increments to `2`.
+* `prefixCount` is now **`{0: 1, 10: 2, 8: 1}`**
+
+
+4. **At Node `5`:**
+* `currSum = 10 + 5 = 15`
+* `needed = 15 - 8 = 7`. Is `7` in map? **No.** (`+0` paths)
+* Record `15`: `prefixCount` is now **`{0: 1, 10: 2, 8: 1, 15: 1}`**
+
+
+5. **At Node `3` (The Magic Moment):**
+* `currSum = 15 + 3 = 18`
+* `needed = 18 - 8 = 10`. Is `10` in map? **YES! `prefixCount[10] = 2**`
+* We add **`2`** to `totalPaths` (`totalPaths` becomes `1 + 2 = 3`).
+* Those 2 paths ending at `3` are:
+1. **`[-2 -> 2 -> 5 -> 3]`** (everything after the first `10`)
+2. **`[5 -> 3]`** (everything after the second `10`)
+
+* Record `18`: `prefixCount` is now **`{0: 1, 10: 2, 8: 1, 15: 1, 18: 1}`**
+
+
+#### Phase B: Backtracking Up the Left Branch
+
+Node `3` has no children, so the recursion unwinds back up to the root (`10`), cleaning up the map step by step:
+
+* Leaving `3`: remove `18` $\to$ `{0: 1, 10: 2, 8: 1, 15: 1}`
+* Leaving `5`: remove `15` $\to$ `{0: 1, 10: 2, 8: 1}`
+* Leaving `2`: decrement `10` $\to$ `{0: 1, 10: 1, 8: 1}`
+* Leaving `-2`: remove `8` $\to$ **`{0: 1, 10: 1}`**
+
+Look at the map when we arrive back at root `10` before going right: **`{0: 1, 10: 1}`**. Every trace of `-2, 2, 5, 3` is completely gone!
+
+
+#### Phase C: Going Down the Right Branch (`10 -> 8`)
+
+6. **At Node `8` (Right Child of `10`):**
+* `currSum = 10 + 8 = 18` *(Note: `currSum` passed into `10->right` was `10`)*
+* `needed = 18 - 8 = 10`. Is `10` in map? **YES! `prefixCount[10] = 1**`
+* Notice `prefixCount[10]` is **`1`** (not `2`!) because we backtracked the left branch.
+* It catches the single-node path **`[8]`** (everything after root `10`).
+* `totalPaths` becomes `3 + 1 =` **`4`**.
+
+* Record `18`, hit `NULL` children, backtrack `18`, and finish.
+
+
+### Final Summary of All 4 Paths Found
+
+1. `[10 -> -2]` (found at `-2` using `prefixCount[0]`)
+2. `[-2 -> 2 -> 5 -> 3]` (found at `3` using first occurrence of `10`)
+3. `[5 -> 3]` (found at `3` using second occurrence of `10`)
+4. `[8]` (found at right child `8` using root's `10`)
+
+--- 
+
 1. boundary traversal approach
     <img src="boundary traversal.png" >
 

@@ -5,6 +5,37 @@ using namespace std;
 
 // K'th ANCESTOR
 
+// Optimized Solution: Enhanced version of below good solution
+Node* solve_2(Node* root, int &k, int node) {
+    if (root == NULL)
+        return NULL;
+    
+    if (root->data == node)
+        return root;
+
+    Node* leftAns = solve(root->left, k, node);
+
+    // If leftAns is NOT NULL, the target node was already found on the left.
+    // Do NOT explore root->right at all!
+    Node* rightAns = NULL;
+    if (leftAns == NULL) {
+        rightAns = solve(root->right, k, node);
+    }
+
+    // Combine both symmetric cases (leftAns != NULL || rightAns != NULL)
+    Node* found = (leftAns != NULL) ? leftAns : rightAns;
+    if (found != NULL) {
+        k--;
+        if (k == 0) {
+            k = INT_MAX; // Lock the answer so ancestors higher up don't overwrite it
+            return root;
+        }
+        return found;
+    }
+
+    return NULL;
+}
+
 // time complexity: O(n)
 // space complexity: O(h)
 

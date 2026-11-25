@@ -7,17 +7,9 @@ using namespace std;
 // read this: https://www.geeksforgeeks.org/count-all-k-sum-paths-in-a-binary-tree/
 
 // Optimized approach
+// Explanation behind this approach available in README.md - search for 'How Did This Approach Even Come About?'
 // time: O(n)
-int pathSum(Node *root, int targetSum) {
-    unordered_map<long long, int> prefixCount;
-
-    prefixCount[0] = 1;
-
-    return countPaths(root, 0, targetSum, prefixCount);
-}
-
-int countPaths(Node *root, long long currSum, int targetSum,
-               unordered_map<long long, int> &prefixCount) {
+int countPaths(Node *root, long long currSum, int targetSum, unordered_map<long long, int> &prefixCount) {
     if(!root)
         return 0;
 
@@ -25,9 +17,8 @@ int countPaths(Node *root, long long currSum, int targetSum,
     long long needed = currSum - targetSum;
 
     int totalPaths = 0;
-    if(prefixCount.find(needed) != prefixCount.end()) {
+    if(prefixCount.find(needed) != prefixCount.end())
         totalPaths += prefixCount[needed];
-    }
 
     prefixCount[currSum]++;
 
@@ -36,12 +27,18 @@ int countPaths(Node *root, long long currSum, int targetSum,
     totalPaths += countPaths(root->right, currSum, targetSum, prefixCount);
 
     prefixCount[currSum]--;
-    if(prefixCount[currSum] == 0) {
-        prefixCount.erase(
-            currSum); // Completely removes the key from the map
-    }
+    if(prefixCount[currSum] == 0)
+        prefixCount.erase(currSum); // Completely removes the key from the map
 
     return totalPaths;
+}
+
+int pathSum(Node *root, int targetSum) {
+    unordered_map<long long, int> prefixCount;
+
+    prefixCount[0] = 1;
+
+    return countPaths(root, 0, targetSum, prefixCount);
 }
 
 // Note: for this problem we've created separate build function

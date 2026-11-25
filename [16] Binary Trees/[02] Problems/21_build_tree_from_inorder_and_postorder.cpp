@@ -9,8 +9,8 @@ using namespace std;
 // algorithm: 
 //      1. take index element as a root (from postorder)
 //      2. find root element's position in an inorder
-//      3. call left recursion from inorderStart to pos - 1 
-//      4. call right recursion from pos + 1 to inorderEnd
+//      3. call right recursion from pos + 1 to inorderEnd
+//      4. call left recursion from inorderStart to pos - 1 
 
 void createMapping(int *inorder, int n, map<int, int> &nodeToIndex) {
     for(int i = 0; i < n; i++)
