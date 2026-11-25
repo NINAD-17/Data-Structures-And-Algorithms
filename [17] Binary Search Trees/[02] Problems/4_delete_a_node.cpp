@@ -1,79 +1,118 @@
-#include <iostream>
 #include "../lib/build.cpp"
+#include <iostream>
 using namespace std;
 
 // DELETE A NODE (imp)
-// conditions: 
+// conditions:
 //      1. 0 childs
 //      2. 1 child in left
 //      3. 1 child in right
 //      4. 2 childs
 
-Node* findMinimumValue(Node* &root) {
-    Node* temp = root;
+Node *findSuccessor(Node *root) {
+    Node *temp = root;
 
-    while(temp -> left != NULL)
-        temp = temp -> left;
-    
+    while(temp->left != NULL)
+        temp = temp->left;
+
     return temp;
 }
 
-Node* deleteFromBST(Node* root, int val) {
+Node *deleteFromBST(Node *root, int data) {
     // base case
     if(root == NULL)
         return root;
 
-    if(root -> data == val) {
-        // 0 child
-        if(root -> left == NULL && root -> right == NULL) {
+    if(root->data == data) {
+        // Case 1: 0 children
+        if(root->left == NULL && root->right == NULL) {
             delete root;
             return NULL;
         }
 
-        // 1 child
-        // --> only left child present
-        if(root -> left != NULL && root -> right == NULL) {
-            Node* temp = root -> left;
+        // Case 2: 1 child -> only left child present
+        if(root->left != NULL && root->right == NULL) {
+            Node *temp = root->left;
             delete root;
             return temp;
         }
 
-        // --> only right child present
-        if(root -> left == NULL && root -> right != NULL) {
-            Node* temp = root -> right;
+        // Case 3: 1 child -> only right child present
+        if(root->left == NULL && root->right != NULL) {
+            Node *temp = root->right;
             delete root;
             return temp;
         }
 
-        // 2 childs
-        if(root -> left != NULL && root -> right != NULL) {
-            // find minimum value from right sub-tree or maximum value from left sub-tree (any one)
-            // here, we've calculated minimum value from right sub-tree (you can relate this with prev problem i.e inorder predecessor and successor)
-            int mini = findMinimumValue(root -> right) -> data;
+        // Case 4: 2 children present
+        if(root->left != NULL && root->right != NULL) {
+            // Since root->right is guaranteed to exist here, the inorder successor
+            // is simply the leftmost (minimum) node in the right subtree
+            int mini = findSuccessor(root->right)->data;
 
-            // replace the data of root with min value
-            root -> data = mini;
+            // Replace root's data with the successor's data
+            root->data = mini;
 
-            // now we've to delete that node mini
-            root -> right = deleteFromBST(root -> right, mini);
+            // Delete the duplicate successor node from the right subtree
+            root->right = deleteFromBST(root->right, mini);
 
             return root;
         }
     }
-
     // recursive calls
-    else if(root -> data > val) {
-        root -> left = deleteFromBST(root -> left, val);
+    else if(root->data > data) {
+        root->left = deleteFromBST(root->left, data);
         return root;
     } else {
-        root -> right = deleteFromBST(root -> right, val);
+        root->right = deleteFromBST(root->right, data);
         return root;
     }
+
+    return root;
+}
+
+// More organized code:
+Node *findSuccessor2(Node *node) {
+    Node *curr = node;
+    while(curr && curr->left != nullptr) {
+        curr = curr->left;
+    }
+    return curr;
+}
+
+Node *deleteNode(Node *root, int key) {
+    if(!root)
+        return nullptr;
+
+    if(key < root->data) {
+        root->left = deleteNode(root->left, key);
+    } else if(key > root->data) {
+        root->right = deleteNode(root->right, key);
+    } else {
+        // Case 1 & 2: 0 children or 1 child (only right child)
+        if(!root->left) {
+            Node *temp = root->right;
+            delete root;
+            return temp;
+        }
+        // Case 3: 1 child (only left child)
+        if(!root->right) {
+            Node *temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        // Case 4: 2 children
+        Node *successor = findSuccessor2(root->right);
+        root->data = successor->data;
+        root->right = deleteNode(root->right, successor->data);
+    }
+
+    return root;
 }
 
 int main() {
-
-    Node* root = NULL;
+    Node *root = NULL;
 
     cout << "note: to stop entering the data give input -1" << endl;
     cout << "enter data to create BST: ";
@@ -84,7 +123,6 @@ int main() {
 
     deleteFromBST(root, 50);
     levelOrderIteratively(root);
-    
 
     return 0;
 }

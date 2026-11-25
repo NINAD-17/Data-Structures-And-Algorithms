@@ -6,6 +6,23 @@ using namespace std;
 
 // IS A VALID BST?
 
+
+// Simplified code: https://leetcode.com/problems/validate-binary-search-tree/
+bool isValid(Node* root, long long min, long long max) {
+    if(!root)
+        return true;
+
+    // Invalid condition
+    if(root -> data <= min || root -> data >= max)
+        return false;
+        
+    return isValid(root -> left, min, root -> data) && isValid(root -> right, root -> data, max);
+}
+
+bool isValidBST_2(Node* root) {
+    return isValid(root, LLONG_MIN, LLONG_MAX);
+}
+
 // approach: with the help of range
 // time complexity: O(n)
 // space complexity: O(h)
@@ -15,6 +32,9 @@ bool isBST(Node* root, int min, int max) {
 
     if(root -> data >= min && root -> data <= max) {
         bool left = isBST(root -> left, min, root -> data);
+        if(left == false)
+            return false;
+
         bool right = isBST(root -> right, root -> data, max);
         return left && right;
     } else 
@@ -56,8 +76,6 @@ bool isValidBST(Node* root) {
     // if the ans vector is sorted means it's valid BST
     return isSorted(ans);
 }
-
-
 
 int main() {
 

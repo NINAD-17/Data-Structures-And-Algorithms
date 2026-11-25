@@ -6,6 +6,46 @@ using namespace std;
 // FIND K-TH SMALLEST AND LARGEST ELEMENT IN BST
 
 // use moris traversal and solve this question for optimized approach. by this approach time complexity will be O(n) and space complexity will be O(1)
+// Time: O(n)
+// Space: O(1)
+int getAnsWithMorrisTraversal(Node* root, int k) {
+    Node* curr = root;
+    int count = 0;
+    int kthSmallest = -1;
+
+    while (curr != nullptr) {
+        if (curr->left == nullptr) {
+            // Visit curr
+            count++;
+            if (count == k) {
+                kthSmallest = curr->data;
+            }
+            curr = curr->right;
+        } else {
+            // Find in-order predecessor
+            Node* prev = curr->left;
+            while (prev->right != nullptr && prev->right != curr) {
+                prev = prev->right;
+            }
+
+            if (prev->right == nullptr) {
+                // Thread creation: explore left subtree
+                prev->right = curr;
+                curr = curr->left;
+            } else {
+                // Thread removal: left subtree is done, visit curr
+                prev->right = nullptr;
+                count++;
+                if (count == k) {
+                    kthSmallest = curr->data;
+                }
+                curr = curr->right;
+            }
+        }
+    }
+
+    return kthSmallest;
+}
 
 // using inorder traversal approach
 int getAns(Node* root, int k, int &i) {
