@@ -371,6 +371,153 @@ Inheritance mode decides how the access modifiers of base class members behave i
 ![Modes of Inheritance](modes_of_inheritance.png)
 👉 Key point: Private members of base class are never directly inherited. But they can still be accessed indirectly via base class’s public/protected methods.
 
+---
+
+To understand modes of inheritance without confusion, think of the inheritance mode as a **ceiling filter**:
+
+> **The Ceiling Rule:** The inheritance mode sets the *maximum visibility* that inherited base members can have in the derived class. It can downgrade access, but it can never upgrade it.
+
+Also remember the golden rule: **Base class `private` members are never directly accessible to any derived class**, regardless of the inheritance mode used.
+
+### The Three Perspectives to Keep in Mind
+
+For any member inherited from `Parent`, always check 3 things:
+
+1. **Inside `Child`:** Can methods inside `Child` touch it?
+2. **Outside (via Object):** Can `childObj.member` be called in `main()`?
+3. **Inside `GrandChild`:** If another class inherits from `Child`, can it access that member?
+
+### 1. The Base Class Setup
+
+```cpp
+class Parent {
+public:
+    int pub = 1;
+protected:
+    int prot = 2;
+private:
+    int priv = 3;
+};
+
+```
+
+### 2. Public Inheritance (`class Child : public Parent`)
+
+This represents an **"IS-A"** relationship (e.g., a `Dog` is an `Animal`). Members retain their original access levels.
+
+* `pub` remains **`public`**
+
+* `prot` remains **`protected`**
+
+* `priv` is **not accessible**
+
+
+```cpp
+class Child : public Parent {
+    void test() {
+        pub = 10;   // OK: public stays public
+        prot = 20;  // OK: protected stays protected
+        // priv = 30; // ERROR: private is never directly accessible
+    }
+};
+
+class GrandChild : public Child {
+    void test() {
+        pub = 100;  // OK: still public
+        prot = 200; // OK: still protected
+    }
+};
+
+int main() {
+    Child c;
+    c.pub = 5;      // OK: pub is public
+    // c.prot = 6;  // ERROR: prot is protected (hidden from outside)
+}
+
+```
+
+### 3. Protected Inheritance (`class Child : protected Parent`)
+
+The ceiling is set to **`protected`**. Public members are demoted to protected.
+
+* `pub` becomes **`protected`**
+
+* `prot` remains **`protected`**
+
+* `priv` is **not accessible**
+
+
+```cpp
+class Child : protected Parent {
+    void test() {
+        pub = 10;   // OK: accessible inside Child
+        prot = 20;  // OK: accessible inside Child
+    }
+};
+
+class GrandChild : public Child {
+    void test() {
+        pub = 100;  // OK: inherited as protected, so GrandChild can still access it
+        prot = 200; // OK: protected in Child, so GrandChild can still access it
+    }
+};
+
+int main() {
+    Child c;
+    // c.pub = 5;  // ERROR: pub was demoted to protected!
+    // c.prot = 6; // ERROR: protected
+}
+
+```
+
+### 4. Private Inheritance (`class Child : private Parent`)
+
+The ceiling is set to **`private`**. Everything inherited is demoted to private inside `Child`. This models an **"implemented-in-terms-of"** relationship.
+
+* `pub` becomes **`private`**
+
+* `prot` becomes **`private`**
+
+* `priv` is **not accessible**
+
+
+```cpp
+class Child : private Parent {
+    void test() {
+        pub = 10;   // OK: accessible inside Child
+        prot = 20;  // OK: accessible inside Child
+    }
+};
+
+class GrandChild : public Child {
+    void test() {
+        // pub = 100;  // ERROR: pub became private in Child!
+        // prot = 200; // ERROR: prot became private in Child!
+    }
+};
+
+int main() {
+    Child c;
+    // c.pub = 5;  // ERROR: pub is private in Child
+}
+
+```
+
+### Questions
+
+* **"If inheritance is public, can child access everything?"** - Almost: it can access `public` and `protected`, but **never** `private`.
+
+
+* **"Can further derived classes also access it in public inheritance?"** - Yes, `GrandChild` can access `public` and `protected` members of `Parent`.
+
+
+* **"When it's private, can Child access Parent, but GrandChild cannot?"** - Exactly right. `Child` can access `Parent`'s `public` and `protected` members, but inside `Child` they turn into `private`. Therefore, `GrandChild` is locked out completely.
+
+
+In modern Low-Level Design (LLD), **public inheritance** is used >95% of the time because it adheres to the **Liskov Substitution Principle (LSP)**. Private inheritance is rarely used—composition (has-a) is almost always preferred over private inheritance.
+
+---
+
 ### Types of Inheritance
 1. **Single Inheritance** → One base class, one derived class.
 ```cpp
@@ -631,3 +778,71 @@ Abstraction = Implementation hiding.
 - **Friend Functions** → When you need external functions (like operators or utilities) to access private data.
 
 - **Friend Classes** → When two classes are tightly linked and one needs full access to the other’s internals.
+
+---
+
+### What is Operator Overloading?
+
+Operator overloading is a compile-time polymorphism feature that allows you to redefine how standard operators (like `+`, `-`, `*`, `==`, `<<`, or `[]`) behave when applied to user-defined types (like classes or structs).
+
+Without operator overloading, custom types require named methods:
+
+```cpp
+Complex c1(1, 2), c2(3, 4);
+Complex c3 = c1.add(c2); // Method call
+
+```
+
+With operator overloading, you can write:
+
+```cpp
+Complex c3 = c1 + c2;    // Natural mathematical syntax
+
+```
+
+Under the hood, the compiler translates `c1 + c2` into a call to an overloaded operator function, typically written as:
+
+```cpp
+Complex operator+(const Complex& other) const {
+    return Complex(this->real + other.real, this->imag + other.imag);
+}
+
+```
+
+### Why Does C++ Support It?
+
+Bjarne Stroustrup designed C++ with a foundational principle: **user-defined types should behave like built-in types.**
+
+1. **First-Class Types:** If a built-in `int` or `double` supports `+`, `*`, and `==`, types like `Complex`, `Matrix`, `Vector3D`, or `BigInt` should feel just as native and expressive.
+2. **Standard Library Ergonomics:** The standard library relies heavily on it:
+* Stream I/O: `std::cout << x;` relies on overloading `<<`.
+* Smart Pointers: `std::unique_ptr` and `std::shared_ptr` overload `->` and `*` so they look and feel like raw pointers.
+* Containers: `std::vector` and `std::map` overload `[]` for natural indexing.
+
+
+3. **Domain-Specific Expressiveness:** For graphics, game development, scientific computing, and physics engines, writing vector math as `v1 = v2 * 2.0f + v3;` is far more readable and maintainable than `v1 = v2.multiply(2.0f).add(v3);`.
+
+### Why Doesn't Java Support It?
+
+James Gosling and the designers of Java deliberately excluded user-defined operator overloading. The primary reasons include:
+
+1. **The "Keep It Simple" Philosophy:** Java was designed to reduce developer footguns and cognitive load. In C++, developers occasionally abused operator overloading (for instance, overloading `+` to mean "append to database" or `*` to mean "intersect sets"), which makes code unpredictable.
+2. **Clarity and Predictability:** In Java, seeing `a + b` guarantees arithmetic or string concatenation. You never have to worry whether `+` initiates an expensive database query, creates multiple temporary objects, or triggers complex side effects behind the scenes.
+3. **Maintenance at Scale:** Java targeted large enterprise codebases where hundreds of engineers collaborate. Explicit method calls like `matrix.multiply(other)` leave zero ambiguity about what operation is taking place.
+
+*(Note: Java has a single built-in operator overload: `+` for `String` concatenation, but developers cannot define their own.)*
+
+
+### Language Support at a Glance
+
+| Language | User-Defined Operator Overloading? | Approach |
+| --- | --- | --- |
+| **C++** | Yes | Full support (free functions and member functions) |
+| **Python** | Yes | Supported via dunder/magic methods (`__add__`, `__eq__`) |
+| **C#** | Yes | Supported via static methods (`public static Vector operator +`) |
+| **Java** | No | Only built-in `+` for strings; use methods like `BigDecimal.add()` |
+| **JavaScript** | No | Only implicit type coercion (`valueOf`, `Symbol.toPrimitive`) |
+| **Go** | No | Deliberately excluded for simplicity and readability |
+
+---
+
