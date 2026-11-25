@@ -2,7 +2,49 @@
 #include <set>
 #include <climits>
 #include <algorithm>
+#include <queue>
+#include <unordered_set>
 using namespace std;
+
+// Using Priority Queue
+// Time: O(n)
+//       Heap operations (push/pop) run on at most 3 elements ($O(\log 3) = O(1)$), and unordered_set lookups are $O(1)$ on average.
+// Space: O(n)
+//       $O(n)$ — Due to the unordered_set storing unique elements (the minHeap itself takes $O(1)$ space because at max only 3 elements it stores).
+int thirdMaxUsingPQ(int *arr, int n) {
+    // Min Heap
+    priority_queue<int, vector<int>, greater<int>> minHeap;
+    unordered_set<int> seen;
+
+    for(int i = 0; i < n; i++) {
+        if(seen.count(arr[i])) {
+            continue;
+        }
+
+        seen.insert(arr[i]);
+
+        if(minHeap.size() < 3) {
+            minHeap.push(arr[i]);
+        } else if(minHeap.top() < arr[i]) {
+            minHeap.pop();
+            minHeap.push(arr[i]);
+        }
+    }
+
+    // If we found 3 distinct maximums, the top of the min-heap is the 3rd max
+    if(minHeap.size() == 3) {
+        return minHeap.top();
+    }
+
+    // Otherwise (fewer than 3 distinct elements), return the largest element
+    int maxVal = minHeap.top();
+    while(!minHeap.empty()) {
+        maxVal = max(maxVal, minHeap.top());
+        minHeap.pop();
+    }
+
+    return maxVal;
+}
 
 // Best Solution: In place algorithm
 // Time Complexity: O(n)
