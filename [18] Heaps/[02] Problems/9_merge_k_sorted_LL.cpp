@@ -47,14 +47,14 @@ Node* mergeKLists(vector<Node*> &lists) {
             tail -> next = top;
             tail = top;
         }
-        
-        return head;
     }
+
+    return head;
 }
 
 // brute force
 // time complexity: O(n*k log(n*k))
-// space complexity:
+// space complexity: O(n * k)
 Node* mergeLL(vector<Node*> lists) {
     vector<int> ans;
 

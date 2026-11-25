@@ -7,6 +7,9 @@ using namespace std;
 //      - given BST is a complete binary tree (hint: it means structure will not change only values in it can change)
 //      - all values in left sub-tree should be less than all the values in the right subtree of the node
 
+// inorder will give you sorted array of all elements.
+// N < L < R therefore we can use preorder to put elements in the tree
+
 void inorder(Node* root, vector<int> &ans) {
     if(root == NULL) return;
 

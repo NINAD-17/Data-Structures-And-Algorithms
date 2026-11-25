@@ -5,7 +5,9 @@ using namespace std;
 
 // optimized approach
 // time complexity: O(n*k log k)
-// space complexity: O(n * k)
+// space complexity: 
+    // Auxillary Space: O(k)
+    // If include ans then O(n * k)
 
 // create custom data structure
 class node {

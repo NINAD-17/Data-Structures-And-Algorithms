@@ -2,6 +2,8 @@
 using namespace std;
 
 // HEAPIFY
+// Time Complexity: O(n) [not O(n log n) - read why? from the notes in README.md]
+// Space Complexity: O(h) or O(log n)
 
 // 1. build max heap
 void heapify(int *arr, int size, int index) {
@@ -10,7 +12,7 @@ void heapify(int *arr, int size, int index) {
     int rightChildIndex = 2 * index + 1;
     cout << "lar: " << arr[largestElement] << " | left: " << arr[leftChildIndex] << " | right: " << arr[rightChildIndex] << endl;
 
-    // if the index starts from 0 then leftChildIndex <= size should be only < and not <=
+    // if the index starts from 0 then `leftChildIndex <= size` should be only `<` and not `<=`
     if(leftChildIndex <= size && arr[largestElement] < arr[leftChildIndex]) {
         cout << "left large: " << arr[leftChildIndex] << endl;
         largestElement = leftChildIndex;
@@ -64,6 +66,7 @@ int main() {
     cout << "printing array before heapify: ";
     printArr(arr, size);
 
+    // Heapify
     for(int i = size/2; i > 0; i--) {
         heapify(arr, size, i);
     }

@@ -2,6 +2,8 @@
 using namespace std;
 
 // KTH GREATEST ELEMENT
+// Time: O(n log k)
+// Space: O(k)
 
 int kthGreatestElement(int *arr, int size, int k) {
     priority_queue<int, vector<int>, greater<int>> minHeap;

@@ -3,6 +3,8 @@
 using namespace std;
 
 // K-TH SMALLEST ELEMENT
+// Time: O(n log k)
+// Space: O(k)
 
 int kthSmallestElement(int *arr, int size, int k) {
 

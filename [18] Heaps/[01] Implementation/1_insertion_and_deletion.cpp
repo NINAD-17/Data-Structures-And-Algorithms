@@ -45,18 +45,26 @@ class Heap {
 
             // step 3: propagate root node to its correct position
             int i = 1;
-            while(i < size) { // not <= because last level is already at correct position now
+            while(i <= size / 2) { // stop before leaf nodes
                 int leftChildIndex = 2 * i;
                 int rightChildIndex = 2 * i + 1;
+                int largest = i;
 
-                if(leftChildIndex < size && arr[i] < arr[leftChildIndex]) {
-                    swap(arr[i], arr[leftChildIndex]);
-                    i = leftChildIndex;
-                } else if(rightChildIndex < size && arr[i] < arr[rightChildIndex]) {
-                    swap(arr[i], arr[rightChildIndex]);
-                    i = rightChildIndex;
-                } else 
+                // Check if left child exists and is strictly greater
+                if(leftChildIndex <= size && arr[leftChildIndex] > arr[largest])
+                    largest = leftChildIndex;
+
+                // Check if right child exists and is strictly greater than current largest
+                if(rightChildIndex <= size && arr[rightChildIndex] > arr[largest])
+                    largest = rightChildIndex;
+
+                // If a child is larger, swap and descend; otherwise, heap property is satisfied
+                if(largest != i) {
+                    swap(arr[i], arr[largest]);
+                    i = largest;
+                } else { 
                     return ; // already in correct position
+                }
             }
         }
 
@@ -79,5 +87,11 @@ int main() {
 
     h.print();
 
+    h.delete_first_node();
+    h.print();
+
+    h.delete_first_node();
+    h.print();
+    
     return 0;
 }
