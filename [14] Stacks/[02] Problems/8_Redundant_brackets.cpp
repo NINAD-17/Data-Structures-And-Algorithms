@@ -46,7 +46,7 @@ bool findRedundantBrackets(string &str) {
 bool findRedundantBrackets_2(string &str) {
     // check the brackets are valid or not (in valid order)
     if(!checkValidity(str)) {
-        cout << "Input string contains invalid brackets. Can't find redundant brackets." << endl;
+        cout << "Input string contains invalid brackets. So no need to find redundant brackets." << endl;
         return false; // not valid
     }
 
@@ -82,6 +82,10 @@ bool findRedundantBrackets_2(string &str) {
 int main() {
 
     string str = "(a+b-(i*i))";
+    // Examples to try
+    //      1. Redundant Brackets: (a+b-(i*i)())
+    //      2. Invalid Brackets: (a+b-(i*i)))
+    //      3. Valid and Non-redundant Brackets: (a+b-(i*i))
 
     if(findRedundantBrackets_2(str))
         cout << str << " contains redundant brackets" << endl;

@@ -21,9 +21,9 @@ bool checkValidity(string &str) {
                 st.pop();
             else if(st.top() == '(' && str[i] == ')')
                 st.pop();
-            else if(st.top() == '[' || str[i] == ']')
+            else if(st.top() == '[' && str[i] == ']')
                 st.pop();
-            else if(st.top() == '<' || str[i] == '>')
+            else if(st.top() == '<' && str[i] == '>')
                 st.pop();
             else 
                 return false; // not valid

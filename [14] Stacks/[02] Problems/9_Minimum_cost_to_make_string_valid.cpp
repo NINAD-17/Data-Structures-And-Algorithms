@@ -20,8 +20,8 @@ using namespace std;
 
 // Some examples: (after removing valid pattenrs '{}')
 // consider 'a' as closing brace ')' and 'b' as opening brace '('
-//      1. {{{{   - here b = 3.           We can see that 2 braces at index [1, 3] needs to change to '}' (to form valid pattern) i.e b/2 = 2
-//      2. }}}}   - here a = 3.           We can see that 2 braces at index [0, 2] needs to change to '{'                         i.e a/2 = 2
+//      1. {{{{   - here b = 4.           We can see that 2 braces at index [1, 3] needs to change to '}' (to form valid pattern) i.e b/2 = 2
+//      2. }}}}   - here a = 4.           We can see that 2 braces at index [0, 2] needs to change to '{'                         i.e a/2 = 2
 //      3. }}}{{{ - here a = 3 and b = 3. We can see that 3 braces at index [0, 2, 3, 5] needs to change to '}'
 //      4. }}}}{{{{ - here a = 4, b = 4.  We can see that here 4 braces at index [0, 2, 5, 7] needs to change.
 // To satisfy all condition and get accurate number of braces needs to change we use below formula,
@@ -67,6 +67,32 @@ int findMinimumCost(string &str) {
         int ans = (a + 1)/2 + (b + 1)/2;
         return ans;
 }
+
+// Without Using Stack (Optimized)
+// Time: O(n)
+// Space: O(1)
+int findMinimumCost2(string &str) {
+    if(str.length() % 2 != 0)
+        return -1;
+
+    int open = 0;  // Unmatched '{' (previously 'b')
+    int close = 0; // Unmatched '}' (previously 'a')
+
+    for(int i = 0; i < str.length(); i++) {
+        if(str[i] == '{') {
+            open++;
+        } else {
+            // If there is an unmatched '{' waiting, pair it up!
+            if(open > 0)
+                open--;
+            else // No '{' available to match this '}'
+                close++;
+        }
+    }
+
+    return (open + 1) / 2 + (close + 1) / 2;
+}
+
 
 int main() {
     string str = "}}{}}}{}{{"; // {}{}{}{}{}

@@ -49,6 +49,25 @@ stack<int> reverseStack_2(stack<int> &st) {
     return tempSt;
 }
 
+// OR using array
+void reverseStack_2_arr(stack<int> &st) {
+    int sizeOfStack = st.size();
+    int *tempArr = new int[sizeOfStack];
+
+    int i = 0;
+    while(!st.empty()) {
+        tempArr[i++] = st.top();
+        st.pop();
+    }
+
+    for(int i = 0; i < sizeOfStack; i++) {
+        st.push(tempArr[i]);
+    }
+
+    delete []tempArr;
+    // return st; // manipulated original array so no need to return;
+}
+
 int main() {
 
     stack<int> st;
@@ -64,6 +83,21 @@ int main() {
     stack<int> tempSt = reverseStack_2(st);
     printStack(tempSt);
 
+    st.push(7);
+    st.push(1);
+    st.push(4);
+    st.push(5);
+    st.push(6);
+
+    // Iterative approach 2 using array
+    reverseStack_2_arr(st);
+    printStack(st);
+
+    st.pop();
+    st.pop();
+    st.pop();
+    st.pop();
+    st.pop();
     st.push(7);
     st.push(1);
     st.push(4);
