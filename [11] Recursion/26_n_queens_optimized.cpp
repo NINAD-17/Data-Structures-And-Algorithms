@@ -2,6 +2,10 @@
 #include <vector>
 using namespace std;
 
+// N-Queens: https://leetcode.com/problems/n-queens/
+// Time: O(N!)
+// Space: O(N^2)
+
 void solve(int col, int n, vector<vector<int>> &board, vector<vector<int>> &ans,
            vector<bool> &rowOccupied,
            vector<bool> &bottomLeftDiagonal,

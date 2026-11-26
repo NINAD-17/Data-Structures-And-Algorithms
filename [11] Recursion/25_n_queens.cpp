@@ -1,6 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// N-Queens: https://leetcode.com/problems/n-queens/
+// Time: O(N! * N)
+// Space: O(N^2)
+
 void addSolution(vector<vector<int>> &board, vector<vector<int>> &ans) {
     int n = board.size();
     vector<int> temp;
