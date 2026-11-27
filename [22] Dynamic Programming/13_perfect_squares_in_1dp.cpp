@@ -4,6 +4,8 @@ using namespace std;
 // Perfect Squares Problem
 // Find minimum number of squares of any number that sums to N. How many perfect squares will need to get N.
 
+// Time: O(n sqrt{n})
+// Space: O(n)
 int usingTabulation(int n) {
     vector<int> dp(n + 1, INT_MAX);
     dp[0] = 0;
@@ -20,6 +22,8 @@ int usingTabulation(int n) {
     return dp[n];
 }
 
+// Time: O(n sqrt{n})
+// Space: O(n)
 int usingMemoization(int n, vector<int> &dp) {
     if(n == 0)
         return 0;
@@ -35,6 +39,8 @@ int usingMemoization(int n, vector<int> &dp) {
     return dp[n];
 }
 
+// Time: O((sqrt{n})^n)
+// Space: O(n)
 int usingRecursion(int n) {
     // Base Case
     if(n == 0)

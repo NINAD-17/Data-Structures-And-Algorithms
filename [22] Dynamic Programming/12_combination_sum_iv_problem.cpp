@@ -5,6 +5,8 @@ using namespace std;
 // Ex - arr[1, 2, 5] and target = 5
 //      combinations can be 1 + 1 + 1 + 1 + 1, 1 + 1 + 1 + 2, 2 + 2 + 1, 5, etc
 
+// Time: O(A * K) ... here K = nums.size(), A = target
+// Space: O(A)
 int usingTabulation(vector<int> &nums, int target) {
     vector<int> dp(target + 1, 0);
     dp[0] = 1;
@@ -19,6 +21,8 @@ int usingTabulation(vector<int> &nums, int target) {
     return dp[target];
 }
 
+// Time: O(A * K) ... here K = nums.size(), A = target
+// Space: O(A)
 int usingMemoization(vector<int> &nums, int target, vector<int> &dp) {
     if(target < 0)
         return 0;
@@ -37,6 +41,8 @@ int usingMemoization(vector<int> &nums, int target, vector<int> &dp) {
     return dp[target];
 }
 
+// Time: O(K^A) ... here K = nums.size(), A = target
+// Space: O(A)
 int usingRecursion(vector<int> &nums, int target) {
     if(target < 0)
         return 0;
@@ -61,8 +67,8 @@ int findWays(vector<int> &nums, int target) {
 }
 
 int main() {
-    vector<int> nums = {1, 2, 5};
-    int target = 5;
+    vector<int> nums = {1, 2}; // Ex. - {1, 2, 5}
+    int target = 3; // Ex. - 5
 
     findWays(nums, target);
     

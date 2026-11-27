@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// Leetcode: https://leetcode.com/problems/house-robber/description/
+// It's House Robber I question from Leetcode where we've to find max sum by choosing non-adjacent elements.
+
 // Time: O(n)
 // Space: O(1)
 int usingOptimizedTabulation(vector<int> &nums, int n) {
@@ -104,16 +107,16 @@ int maximumNonAdjacentSum(vector<int> &nums) {
     cout << "Answer using memoization: " << ans << endl;
 
     // Approach: Tabulation
-    ans = usingTabulation(nums, n - 1);
+    ans = usingTabulation(nums, n);
     cout << "Answer using tabulation: " << ans << endl;
 
     // Approach: Optimized Tabulation
-    ans = usingOptimizedTabulation(nums, n - 1);
+    ans = usingOptimizedTabulation(nums, n);
     cout << "Answer using optimized tabulation: " << ans << endl;
 }
 
 int main() {
-    vector<int> nums = {9, 9, 8, 2};
+    vector<int> nums = {1, 3, 2, 4, 6};
 
     maximumNonAdjacentSum(nums);
 

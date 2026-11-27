@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// Leetcode: https://leetcode.com/problems/coin-change/description/
+
 // Question: We've an input array of coins [1, 2, 5] and those coins are present in an infinite supply. 
 //      By using those coins we've to find minimum number of coins to make that amount. In our example the answer is [5 + 5 + 1].
 //      If we can't make the target then return -1.
@@ -11,8 +13,9 @@ using namespace std;
 //      iii. [3 + 3 + 1] (this is the minimum answer)
 
 // Approach: Tabulation
-// Time: O(n) * O(coins.size())
-// Space: O(n)
+// Let K = coins.size() and A = targetAmt
+// Time: O(A * K)
+// Space: O(A)
 int usingTabulation(vector<int> &coins, int targetAmt) {
     // dp[i] = minimum number of coins required to make amount i  
     vector<int> dp(targetAmt + 1, INT_MAX);
@@ -37,8 +40,9 @@ int usingTabulation(vector<int> &coins, int targetAmt) {
 }
 
 // Approach: Memoization
-// Time: O(n) * O(coins.size())
-// Space: O(n) + O(n)
+// Let K = coins.size() and A = targetAmt
+// Time: O(A * K)
+// Space: O(A)
 int usingMemoization(vector<int> &coins, int targetAmt, vector<int> &dp) {
     // Base Case 1: If target becomes 0, no coins are needed.
     if(targetAmt == 0) {
@@ -76,8 +80,10 @@ int usingMemoization(vector<int> &coins, int targetAmt, vector<int> &dp) {
 }
 
 // Approach: Recursive Brute Force
-// Time: O(2^n)
-// Space: O(n)
+// Let K = coins.size() and A = targetAmt
+// Time: O(K^A) At each level, you branch into $K$ directions. The recursion tree reaches depth up to $A$.
+//       If you've 3 coins and min number is 1 then when you repeatedly repeat coin 1 - it stacks up to A frames that's why 3^A
+// Space: O(A)
 int usingRecursion(vector<int> &coins, int targetAmt) {
     // Base Case 1: If target becomes 0, no coins are needed.
     if(targetAmt == 0) {
@@ -129,8 +135,8 @@ int minimumNumCoins(vector<int> &coins, int targetAmt) {
 }
 
 int main() {
-    vector<int> coins = {1, 3, 5};
-    int targetAmt = 11;
+    vector<int> coins = {1, 2, 3};
+    int targetAmt = 5;
 
     minimumNumCoins(coins, targetAmt);
 

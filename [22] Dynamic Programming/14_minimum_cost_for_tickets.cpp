@@ -3,6 +3,8 @@ using namespace std;
 
 // Minimum Cost for Tickets
 
+// Time: O(N^2)
+// Space: O(N)
 int usingTabulation(int totalDays, vector<int> &days, vector<int> &cost) {
     vector<int> dp(totalDays + 1, INT_MAX);
     dp[totalDays] = 0;
@@ -20,12 +22,14 @@ int usingTabulation(int totalDays, vector<int> &days, vector<int> &cost) {
         for(i = k; i < totalDays && days[i] < days[k] + 30; i++);
         int option3 = cost[2] + dp[i];
 
-        dp[k] = min(option1, option2, option3);
+        dp[k] = min(option1, min(option2, option3));
     }
 
     return dp[0];
 }
 
+// Time: O(N^2)
+// Space: O(N)
 int usingMemoization(int totalDays, vector<int> &days, vector<int> &cost, int index, vector<int> &dp) {
     // Base Case
     if(index >= totalDays)
@@ -35,7 +39,7 @@ int usingMemoization(int totalDays, vector<int> &days, vector<int> &cost, int in
         return dp[index];
 
     // 1 Day Pass
-    int option1 = cost[0] + usingRecursion(totalDays, days, cost, index + 1);
+    int option1 = cost[0] + usingMemoization(totalDays, days, cost, index + 1, dp);
 
     // 7 Day Pass
     int i;
@@ -46,10 +50,13 @@ int usingMemoization(int totalDays, vector<int> &days, vector<int> &cost, int in
     for(i = index; i < totalDays && days[i] < days[index] + 30; i++);
     int option3 = cost[2] + usingMemoization(totalDays, days, cost, i, dp);
 
-    dp[index] = min(option1, option2, option3);
+    dp[index] = min(option1, min(option2, option3));
     return dp[index];
 }
 
+
+// Time: O((3^N) * N)
+// Space: O(N)
 int usingRecursion(int totalDays, vector<int> &days, vector<int> &cost, int index) {
     // Base Case
     if(index >= totalDays)
@@ -63,11 +70,11 @@ int usingRecursion(int totalDays, vector<int> &days, vector<int> &cost, int inde
     for(i = index; i < totalDays && days[i] < days[index] + 7; i++);
     int option2 = cost[1] + usingRecursion(totalDays, days, cost, i); // i is the index after 7 days
 
-    // 30 Day Pass
+    // 30 Day Pass 
     for(i = index; i < totalDays && days[i] < days[index] + 30; i++);
     int option3 = cost[2] + usingRecursion(totalDays, days, cost, i);
 
-    return min(option1, option2, option3);
+    return min(option1, min(option2, option3));
 }
 
 int minimumCostForTickets(int totalDays, vector<int> &days, vector<int> &cost) {
@@ -80,7 +87,10 @@ int minimumCostForTickets(int totalDays, vector<int> &days, vector<int> &cost) {
 }
 
 int main() {
+    vector<int> days = {1, 4, 6, 7, 8, 20};
+    vector<int> cost = {2, 7, 15};
 
+    minimumCostForTickets(days.size(), days, cost);
     
     return 0;
 }

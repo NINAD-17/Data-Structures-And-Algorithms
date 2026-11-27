@@ -40,7 +40,15 @@ int usingRecursion(vector<int> &values, int i, int j) {
 
     int ans = INT_MAX;
     for(int k = i + 1; k < j; k++) {
-        ans = min(ans, (values[i] * values[j] * values[k]) + usingRecursion(values, i, k) + usingRecursion(values, k, j));
+        // ans = min(ans, (values[i] * values[j] * values[k]) + usingRecursion(values, i, k) + usingRecursion(values, k, j));
+
+        // Simplification of above line
+        int triangleCost = values[i] * values[j] * values[k];
+        int leftPolygonCost = usingRecursion(values, i, k);
+        int rightPolygonCost = usingRecursion(values, k, j);
+
+        int totalCostForCurrentK = triangleCost + leftPolygonCost + rightPolygonCost;
+        ans = min(ans, totalCostForCurrentK);
     }
 
     return ans;
